@@ -8,12 +8,13 @@
     assets/css/app.css
     <link rel="manifest" href="manifest.json">
 
-    https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2script>
+    <script/cdn.jsdelivr.net/npm/@supabase/supabase-js@2script>
 
     assets/js/config.jsscript>
-    <ssets/js/supabase.jsscript>
-    <scriptjs/auth.jsscript>
+    assets/js/supabase.jsscript>
+    assets/js/auth.jsscript>
 </head>
+
 <body>
 
 <div class="container">
@@ -21,6 +22,7 @@
     <h1>Fitness AI Hub</h1>
 
     <div class="card">
+
         <h2>Create Account</h2>
 
         <input
@@ -40,6 +42,7 @@
         <button onclick="signUp()">
             Create Account
         </button>
+
     </div>
 
     <div class="card">
@@ -65,8 +68,8 @@
 </div>
 
 <script>
-if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("service-worker.js");
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js');
 }
 </script>
 
