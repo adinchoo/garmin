@@ -1,0 +1,1 @@
+print("Implement Garmin sync here")
