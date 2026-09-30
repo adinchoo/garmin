@@ -1,0 +1,6 @@
+.env
+scraper/.env
+*.env
+.venv/
+__pycache__/
+node_modules/
