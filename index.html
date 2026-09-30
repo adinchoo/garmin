@@ -1,73 +1,46 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fitness AI Hub</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    assets/css/app.css
-    <link rel="manifest" href="manifest.json">
+  <title>Fitness AI Hub</title>
 
-    https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2script>
+  <link rel="stylesheet" href="./assets/css/app.css" />
+  <link rel="manifest" href="./manifest.json" />
 
-    assets/js/config.jsscript>
-    <scriptjs/supabase.jsscript>
-    <scriptjs/auth.jsscript>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./assets/js/config.js"></script>
+  <script src="./assets/js/supabase.js"></script>
+  <script src="./assets/js/auth.js"></script>
+  <script src="./assets/js/app.js"></script>
 </head>
+
 <body>
-
-<div class="container">
-
+  <div class="container auth-container">
     <h1>Fitness AI Hub</h1>
+    <p class="subtitle">Garmin health data + AI body condition analysis</p>
 
     <div class="card">
-        <h2>Create Account</h2>
+      <h2>Create Account</h2>
 
-        <input
-            id="fullName"
-            type="text"
-            placeholder="Full Name">
+      <input id="fullName" type="text" placeholder="Full Name" />
+      <input id="signupEmail" type="email" placeholder="Email" />
+      <input id="signupPassword" type="password" placeholder="Password" />
 
-        <input
-            id="signupEmail"
-            type="email"
-            placeholder="Email">
-
-        <input
-            id="signupPassword"
-            type="password"
-            placeholder="Password">
-
-        <button onclick="signUp()">
-            Create Account
-        </button>
+      <button onclick="signUp()">Create Account</button>
     </div>
 
     <div class="card">
-        <h2>Login</h2>
+      <h2>Login</h2>
 
-        <input
-            id="loginEmail"
-            type="email"
-            placeholder="Email">
+      <input id="loginEmail" type="email" placeholder="Email" />
+      <input id="loginPassword" type="password" placeholder="Password" />
 
-        <input
-            id="loginPassword"
-            type="password"
-            placeholder="Password">
-
-        <button onclick="login()">
-            Login
-        </button>
+      <button onclick="login()">Login</button>
     </div>
-
-</div>
-
-<script>
-if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("./service-worker.js");
-}
-</script>
-
+  </div>
 </body>
 </html>
