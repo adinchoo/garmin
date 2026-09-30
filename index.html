@@ -8,10 +8,11 @@
     assets/css/app.css
     <link rel="manifest" href="manifest.json">
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase2script>
+    https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2script>
 
-    <scriptjs/config.jsscript>
-    <script src="assets/js/supabase.js"></scriptuth.jsscript>
+    assets/js/config.jsscript>
+    <scriptjs/supabase.jsscript>
+    <scriptjs/auth.jsscript>
 </head>
 <body>
 
@@ -24,6 +25,7 @@
 
         <input
             id="fullName"
+            type="text"
             placeholder="Full Name">
 
         <input
@@ -42,7 +44,6 @@
     </div>
 
     <div class="card">
-
         <h2>Login</h2>
 
         <input
@@ -58,14 +59,13 @@
         <button onclick="login()">
             Login
         </button>
-
     </div>
 
 </div>
 
 <script>
 if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("service-worker.js");
+    navigator.serviceWorker.register("./service-worker.js");
 }
 </script>
 
