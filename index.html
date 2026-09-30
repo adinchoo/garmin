@@ -1,77 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitness AI Hub</title>
 
-<meta charset="UTF-8">
+    assets/css/app.css
+    <link rel="manifest" href="manifest.json">
 
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+    https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2script>
 
-<title>Fitness AI Hub</title>
-
-assets/css/app.css
-
-manifest.json
-
-https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2script>
-
-assets/js/config.jsscript>
-assets/js/supabase.jsscript>
-assets/js/auth.jsscript>
-
+    assets/js/config.jsscript>
+    <ssets/js/supabase.jsscript>
+    <scriptjs/auth.jsscript>
 </head>
-
 <body>
 
 <div class="container">
 
-<h1>Fitness AI Hub</h1>
+    <h1>Fitness AI Hub</h1>
 
-<div class="card">
+    <div class="card">
+        <h2>Create Account</h2>
 
-<h2>Create Account</h2>
+        <input
+            id="fullName"
+            placeholder="Full Name">
 
-<input
-id="fullName"
-placeholder="Full Name">
+        <input
+            id="signupEmail"
+            type="email"
+            placeholder="Email">
 
-<input
-id="signupEmail"
-type="email"
-placeholder="Email">
+        <input
+            id="signupPassword"
+            type="password"
+            placeholder="Password">
 
-<input
-id="signupPassword"
-type="password"
-placeholder="Password">
+        <button onclick="signUp()">
+            Create Account
+        </button>
+    </div>
 
-<button onclick="signUp()">
-Create Account
-</button>
+    <div class="card">
 
-</div>
+        <h2>Login</h2>
 
-<div class="card">
+        <input
+            id="loginEmail"
+            type="email"
+            placeholder="Email">
 
-<h2>Login</h2>
+        <input
+            id="loginPassword"
+            type="password"
+            placeholder="Password">
 
-<input
-id="loginEmail"
-type="email"
-placeholder="Email">
+        <button onclick="login()">
+            Login
+        </button>
 
-<input
-id="loginPassword"
-type="password"
-placeholder="Password">
-
-<button onclick="login()">
-Login
-</button>
-
-</div>
+    </div>
 
 </div>
+
+<script>
+if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("service-worker.js");
+}
+</script>
 
 </body>
 </html>
