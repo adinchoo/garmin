@@ -1,1 +1,94 @@
-<h2>Dashboard</h2>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Dashboard</title>
+
+<ssets/css/app.css
+
+https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2script>
+
+assets/js/config.jsscript>
+<scriptjs/supabase.jsscript>
+assets/js/dashboard.jsscript>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="header">
+
+<h1>Fitness AI Hub</h1>
+
+<button onclick="logout()">
+Logout
+</button>
+
+</div>
+
+<div class="grid">
+
+<div class="card">
+<h3>Current Weight</h3>
+<p id="weight">-</p>
+</div>
+
+<div class="card">
+<h3>Target Weight</h3>
+<p id="targetWeight">-</p>
+</div>
+
+<div class="card">
+<h3>Today's Steps</h3>
+<p id="steps">-</p>
+</div>
+
+<div class="card">
+<h3>Resting HR</h3>
+<p id="rhr">-</p>
+</div>
+
+<div class="card">
+<h3>Stress</h3>
+<p id="stress">-</p>
+</div>
+
+<div class="card">
+<h3>AI Readiness</h3>
+<p id="readiness">-</p>
+</div>
+
+</div>
+
+<div class="card">
+
+<h2>Recent Activities</h2>
+
+<table>
+
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Distance</th>
+<th>Calories</th>
+</tr>
+</thead>
+
+<tbody id="activitiesTable"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</body>
+</html>

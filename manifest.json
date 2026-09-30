@@ -1,1 +1,8 @@
-{"name":"Fitness AI Hub","short_name":"FitnessAI","display":"standalone"}
+{
+  "name": "Fitness AI Hub",
+  "short_name": "FitnessAI",
+  "display": "standalone",
+  "theme_color": "#0ea5e9",
+  "background_color": "#ffffff",
+  "start_url": "/"
+}
