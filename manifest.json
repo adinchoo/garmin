@@ -1,0 +1,10 @@
+{
+  "name": "Fitness AI Hub v3",
+  "short_name": "FitnessAI",
+  "description": "Garmin wellness analytics and AI coaching dashboard",
+  "display": "standalone",
+  "theme_color": "#07111f",
+  "background_color": "#07111f",
+  "start_url": "./index.html",
+  "scope": "./"
+}
