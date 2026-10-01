@@ -1,0 +1,1 @@
+Keep the currently deployed analyze-meal Edge Function. It must use model gemini-3.8-flash and the existing GEMINI_API_KEY secret.

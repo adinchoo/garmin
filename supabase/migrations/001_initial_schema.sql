@@ -1,1 +1,0 @@
--- Keep the existing v3 initial schema. No v4 schema change is required.

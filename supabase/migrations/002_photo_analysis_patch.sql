@@ -1,1 +1,0 @@
--- Already applied in v3. No v4 schema change is required.

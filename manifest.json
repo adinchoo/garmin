@@ -1,13 +1,17 @@
 {
   "id": "./",
-  "name": "Fitness AI Hub v4",
+  "name": "Fitness AI Hub v6",
   "short_name": "FitnessAI",
+  "description": "Garmin, nutrition and Gemini fitness intelligence",
   "start_url": "./dashboard.html",
   "scope": "./",
   "display": "standalone",
+  "display_override": [
+    "standalone"
+  ],
   "orientation": "portrait-primary",
-  "theme_color": "#07111f",
-  "background_color": "#07111f",
+  "background_color": "#050b16",
+  "theme_color": "#050b16",
   "icons": [
     {
       "src": "./assets/icons/icon-192.png",

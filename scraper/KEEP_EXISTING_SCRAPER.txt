@@ -1,0 +1,1 @@
+No scraper change is required for v6. Keep the currently working Garmin scraper and local .env.

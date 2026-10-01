@@ -1,15 +1,23 @@
-# Fitness AI Hub v4
+# Fitness AI Hub v6 Hybrid Premium
 
-Complete frontend replacement for the existing v3 deployment.
+A complete frontend redesign combining Apple-style mobile polish, Garmin-level health data and Strava-style activity presentation.
 
-## Improvements
-- iPhone PWA safe-area layout and standalone meta tags
-- Separate Take Photo and Choose Gallery buttons
-- Bottom navigation instead of burger menu
-- App-style views with swipe navigation
-- Clickable premium-style activity detail sheet
-- Fixed-width responsive activity cards
-- Greeting uses profiles.full_name
+## Included
+- Premium readiness-focused home screen
+- Direct mobile AI Coach tab
+- Compact trend insights and redesigned charts
+- Premium clickable activity feed and detail sheet
+- Separate camera and gallery meal-photo controls
+- Nutrition progress ring and macro summary
+- Quick action sheet
+- iPhone safe-area support, standalone PWA metadata and refreshed icons
+- Profile-name greeting from `profiles.full_name`
+
+## Backend
+Your deployed `analyze-health` and `analyze-meal` functions already work. Keep them deployed with `gemini-3.8-flash`. The existing `GEMINI_API_KEY` remains in Supabase secrets. No SQL migration is required.
 
 ## Deploy
-Upload the complete frontend to GitHub Pages. Your existing database, analyze-health, analyze-meal and GEMINI_API_KEY remain valid. Do not rerun SQL. Do not redeploy analyze-meal from the reference placeholder in this package. Remove the old iPhone Home Screen app, clear Safari site data, then add it to the Home Screen again.
+Upload the complete frontend files to GitHub Pages. Do not overwrite or redeploy the working Edge Functions from this package because the package intentionally contains only KEEP_DEPLOYED notes for backend folders.
+
+## iPhone update
+Remove the old Home Screen PWA, clear Safari website data for the GitHub Pages domain, open the site in Safari and use Share > Add to Home Screen. This installs the v6 manifest and cache.
