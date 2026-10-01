@@ -1,112 +1,85 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#07111f">
   <title>Dashboard | Fitness AI Hub</title>
-
-  <link rel="stylesheet" href="./assets/css/app.css" />
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="./assets/js/config.js"></script>
-  <script src="./assets/js/supabase.js"></script>
-  <script src="./assets/js/auth.js"></script>
-  <script src="./assets/js/dashboard.js"></script>
-  <script src="https://js.puter.com/v2/"></script>
+  <link rel="manifest" href="./manifest.json">
+  <link rel="stylesheet" href="./assets/css/app.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
+  <script defer src="./assets/js/config.js"></script>
+  <script defer src="./assets/js/supabase.js"></script>
+  <script defer src="./assets/js/auth.js"></script>
+  <script defer src="./assets/js/charts.js"></script>
+  <script defer src="./assets/js/ai.js"></script>
+  <script defer src="./assets/js/nutrition.js"></script>
+  <script defer src="./assets/js/dashboard.js"></script>
+  <script defer src="./assets/js/app.js"></script>
 </head>
+<body class="dashboard-page">
+  <div id="pageLoader" class="page-loader"><div class="spinner"></div><span>Loading your health dashboard...</span></div>
+  <aside class="sidebar" id="sidebar">
+    <a class="brand" href="./dashboard.html"><span class="brand-mark">F</span><span>Fitness AI Hub</span></a>
+    <nav class="side-nav">
+      <a class="active" href="#overview">Overview</a><a href="#trends">Trends</a><a href="#nutrition">Nutrition</a><a href="#aiCoach">AI Coach</a><a href="#activities">Activities</a><a href="#profileSettings">Profile</a>
+    </nav>
+    <div class="sidebar-footer"><div class="mini-user"><div class="avatar" id="avatarInitial">A</div><div><strong id="sideName">User</strong><span id="sideEmail">...</span></div></div><button class="btn ghost" id="logoutButton" type="button">Sign out</button></div>
+  </aside>
 
-<body>
-  <div class="container">
+  <main class="main-content">
+    <header class="topbar"><button class="icon-btn mobile-only" id="menuButton" aria-label="Open menu">☰</button><div><p class="eyebrow">DAILY OVERVIEW</p><h1 id="greeting">Good day</h1><p id="dashboardDate" class="muted"></p></div><div class="top-actions"><button class="icon-btn" id="themeButton" aria-label="Toggle theme">◐</button><button class="btn primary" id="syncRefreshButton" type="button">Refresh data</button></div></header>
 
-    <div class="header">
-      <div>
-        <h1>Fitness AI Hub</h1>
-        <p id="userEmail" class="subtitle"></p>
+    <section id="overview">
+      <div class="section-head"><div><h2>Today at a glance</h2><p class="muted" id="dataStatus">Your newest Garmin and manual records.</p></div><span class="status-pill" id="lastHealthDate">No data yet</span></div>
+      <div class="kpi-grid">
+        <article class="kpi-card accent"><span class="kpi-icon">⚖</span><div><span>Current weight</span><strong id="weight">-</strong><small id="weightDelta">Add a measurement</small></div></article>
+        <article class="kpi-card"><span class="kpi-icon">◎</span><div><span>BMI</span><strong id="bmi">-</strong><small id="bmiLabel">Profile height required</small></div></article>
+        <article class="kpi-card"><span class="kpi-icon">↟</span><div><span>Steps</span><strong id="steps">-</strong><small id="stepsGoal">Goal: 10,000</small></div></article>
+        <article class="kpi-card"><span class="kpi-icon">♥</span><div><span>Resting HR</span><strong id="rhr">-</strong><small>bpm</small></div></article>
+        <article class="kpi-card"><span class="kpi-icon">☾</span><div><span>Sleep</span><strong id="sleep">-</strong><small id="sleepScore">Latest session</small></div></article>
+        <article class="kpi-card"><span class="kpi-icon">ϟ</span><div><span>Body battery</span><strong id="battery">-</strong><small id="batteryRange">Daily range</small></div></article>
+        <article class="kpi-card"><span class="kpi-icon">≈</span><div><span>Stress</span><strong id="stress">-</strong><small id="stressLabel">No status</small></div></article>
+        <article class="kpi-card"><span class="kpi-icon">🔥</span><div><span>Active calories</span><strong id="calories">-</strong><small>kcal</small></div></article>
       </div>
 
-      <button onclick="logout()">Logout</button>
-    </div>
-
-    <div class="grid">
-      <div class="card stat">
-        <h3>Current Weight</h3>
-        <p id="weight">-</p>
+      <div class="overview-grid">
+        <article class="panel goal-card"><div class="panel-head"><div><p class="eyebrow">WEIGHT GOAL</p><h3>Your progress</h3></div><span id="goalPercent">0%</span></div><div class="goal-numbers"><div><span>Current</span><strong id="goalCurrent">-</strong></div><div><span>Target</span><strong id="targetWeight">-</strong></div><div><span>Remaining</span><strong id="weightRemaining">-</strong></div></div><div class="progress-track"><div id="goalProgress" class="progress-fill"></div></div><p id="goalMessage" class="muted">Complete your profile to calculate progress.</p></article>
+        <article class="panel readiness-card"><div class="readiness-ring" id="readinessRing"><div><strong id="readiness">-</strong><span>readiness</span></div></div><div><p class="eyebrow">CURRENT SIGNAL</p><h3 id="readinessTitle">Waiting for data</h3><p id="readinessText" class="muted">Readiness uses your latest sleep, stress, resting heart rate and body battery.</p></div></article>
       </div>
+    </section>
 
-      <div class="card stat">
-        <h3>Target Weight</h3>
-        <p id="targetWeight">-</p>
+    <section id="trends" class="section-block"><div class="section-head"><div><h2>Health trends</h2><p class="muted">Visual analysis of your recent records.</p></div><select id="trendRange"><option value="7">7 days</option><option value="14" selected>14 days</option><option value="30">30 days</option></select></div>
+      <div class="chart-grid"><article class="panel chart-panel wide"><div class="panel-head"><div><p class="eyebrow">BODY COMPOSITION</p><h3>Weight trend</h3></div><span id="weightTrendNote" class="trend-chip">No trend</span></div><div class="chart-box"><canvas id="weightChart"></canvas></div></article><article class="panel chart-panel"><div class="panel-head"><div><p class="eyebrow">MOVEMENT</p><h3>Daily steps</h3></div></div><div class="chart-box"><canvas id="stepsChart"></canvas></div></article><article class="panel chart-panel"><div class="panel-head"><div><p class="eyebrow">RECOVERY</p><h3>Resting heart rate</h3></div></div><div class="chart-box"><canvas id="heartChart"></canvas></div></article><article class="panel chart-panel"><div class="panel-head"><div><p class="eyebrow">LOAD</p><h3>Stress trend</h3></div></div><div class="chart-box"><canvas id="stressChart"></canvas></div></article><article class="panel chart-panel"><div class="panel-head"><div><p class="eyebrow">ACTIVITY MIX</p><h3>Activity breakdown</h3></div></div><div class="chart-box donut"><canvas id="activityChart"></canvas></div></article></div>
+    </section>
+
+
+    <section id="nutrition" class="section-block">
+      <div class="section-head"><div><h2>AI nutrition log</h2><p class="muted">Photograph a meal, review Gemini's estimate, then save it automatically.</p></div><span class="status-pill" id="nutritionToday">0 kcal today</span></div>
+      <div class="nutrition-layout">
+        <article class="panel photo-panel">
+          <p class="eyebrow">PHOTO ANALYSIS</p><h3>Log a meal from a photo</h3>
+          <label class="photo-drop" for="mealPhoto"><input id="mealPhoto" type="file" accept="image/jpeg,image/png,image/webp" capture="environment"><img id="mealPreview" alt="Meal preview"><div id="photoPrompt"><strong>Take or choose a meal photo</strong><span>JPG, PNG or WebP. The image is compressed before analysis.</span></div></label>
+          <label>Meal type<select id="mealType"><option value="breakfast">Breakfast</option><option value="lunch">Lunch</option><option value="dinner">Dinner</option><option value="snack">Snack</option></select></label>
+          <label>Optional note<input id="mealNote" type="text" placeholder="Example: chicken rice, less sauce"></label>
+          <button class="btn primary full" id="analyzeMealButton" type="button">Analyze and auto-log meal</button>
+          <p class="nutrition-disclaimer">Photo-based nutrition values are estimates. Portions, ingredients and cooking oils may not be visible.</p>
+        </article>
+        <article class="panel nutrition-result"><p class="eyebrow">LATEST ANALYSIS</p><div id="mealAnalysisEmpty" class="empty-state">Upload a clear meal photo to start.</div><div id="mealAnalysis" hidden><div class="meal-title"><div><h3 id="mealName">Meal</h3><p id="mealConfidence" class="muted"></p></div><strong id="mealCalories">0 kcal</strong></div><div class="macro-grid"><div><span>Protein</span><strong id="mealProtein">0 g</strong></div><div><span>Carbs</span><strong id="mealCarbs">0 g</strong></div><div><span>Fat</span><strong id="mealFat">0 g</strong></div><div><span>Fiber</span><strong id="mealFiber">0 g</strong></div></div><p id="mealSummary" class="muted"></p><div id="mealItems" class="food-items"></div></div></article>
       </div>
+      <div class="nutrition-stats"><article class="kpi-card"><span class="kpi-icon">🍽</span><div><span>Meals today</span><strong id="mealsToday">0</strong><small>auto-logged</small></div></article><article class="kpi-card"><span class="kpi-icon">P</span><div><span>Protein today</span><strong id="proteinToday">0 g</strong><small>estimated</small></div></article><article class="kpi-card"><span class="kpi-icon">C</span><div><span>Carbs today</span><strong id="carbsToday">0 g</strong><small>estimated</small></div></article><article class="kpi-card"><span class="kpi-icon">F</span><div><span>Fat today</span><strong id="fatToday">0 g</strong><small>estimated</small></div></article></div>
+      <div class="panel meal-history-panel"><div class="panel-head"><div><p class="eyebrow">RECENT MEALS</p><h3>Nutrition history</h3></div></div><div id="mealHistory" class="meal-history"><div class="empty-state">No meals logged yet.</div></div></div>
+    </section>
 
-      <div class="card stat">
-        <h3>Today's Steps</h3>
-        <p id="steps">-</p>
-      </div>
+    <section id="aiCoach" class="section-block"><div class="ai-hero panel"><div><span class="ai-badge">GEMINI WELLNESS COACH</span><h2>Turn your signals into a practical plan</h2><p>Gemini reviews your recent health history and returns wellness guidance. It does not diagnose medical conditions.</p><button class="btn ai-button" id="generateAiButton" type="button">Generate new analysis</button></div><div class="ai-score"><span>AI readiness</span><strong id="aiReadiness">-</strong><small id="aiRisk">No report</small></div></div>
+      <div class="ai-grid"><article class="panel ai-summary"><p class="eyebrow">LATEST SUMMARY</p><h3 id="aiHeadline">No AI report yet</h3><p id="aiSummary">Generate an analysis after Garmin or manual data has been added.</p><div id="aiGeneratedAt" class="muted small"></div></article><article class="panel"><p class="eyebrow">RECOMMENDATIONS</p><div id="aiRecommendations" class="recommendation-list"><div class="empty-state">Your recommendations will appear here.</div></div></article><article class="panel"><p class="eyebrow">KEY FINDINGS</p><div id="aiFindings" class="recommendation-list"><div class="empty-state">Your findings will appear here.</div></div></article></div>
+    </section>
 
-      <div class="card stat">
-        <h3>Resting HR</h3>
-        <p id="rhr">-</p>
-      </div>
+    <section id="activities" class="section-block"><div class="section-head"><div><h2>Recent activities</h2><p class="muted" id="activitySummary">Your latest Garmin sessions.</p></div></div><div id="activitiesGrid" class="activity-grid"><div class="empty-state panel">No activities available.</div></div></section>
 
-      <div class="card stat">
-        <h3>Stress</h3>
-        <p id="stress">-</p>
-      </div>
-
-      <div class="card stat">
-        <h3>AI Readiness</h3>
-        <p id="readiness">-</p>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2>AI Body Condition Report</h2>
-
-      <button onclick="generateAiReport()">Generate AI Analysis</button>
-
-      <div id="aiReport" class="report">
-        No AI report yet.
-      </div>
-    </div>
-
-    <div class="card">
-      <h2>Manual Body Measurement</h2>
-
-      <input id="manualWeight" type="number" step="0.1" placeholder="Weight kg" />
-      <input id="manualBodyFat" type="number" step="0.1" placeholder="Body fat %" />
-
-      <button onclick="saveBodyMeasurement()">Save Measurement</button>
-
-      <p id="measurementMessage"></p>
-    </div>
-
-    <div class="card">
-      <h2>Recent Activities</h2>
-
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Type</th>
-              <th>Distance</th>
-              <th>Duration</th>
-              <th>Calories</th>
-              <th>Avg HR</th>
-            </tr>
-          </thead>
-
-          <tbody id="activitiesTable"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2>Latest Daily Health</h2>
-      <div id="dailyHealthList"></div>
-    </div>
-
-  </div>
+    <section class="section-block two-column" id="profileSettings"><article class="panel"><div class="panel-head"><div><p class="eyebrow">QUICK ENTRY</p><h3>Add body measurement</h3></div></div><form id="measurementForm" class="form-grid"><label>Weight (kg)<input id="manualWeight" type="number" min="20" max="400" step="0.1" required></label><label>Body fat (%)<input id="manualBodyFat" type="number" min="1" max="80" step="0.1"></label><button class="btn primary full" type="submit">Save measurement</button></form><div id="measurementMessage" class="message"></div></article><article class="panel"><div class="panel-head"><div><p class="eyebrow">PROFILE</p><h3>Personal goals</h3></div></div><form id="profileForm" class="form-grid"><label>Full name<input id="profileName" type="text" required></label><label>Date of birth<input id="profileDob" type="date"></label><label>Height (cm)<input id="profileHeight" type="number" min="80" max="250" step="0.1"></label><label>Target weight (kg)<input id="profileTarget" type="number" min="20" max="400" step="0.1"></label><label class="full">Primary goal<select id="profileGoal"><option value="weight_loss">Weight loss</option><option value="fitness">Improve fitness</option><option value="maintenance">Maintain health</option><option value="performance">Performance</option></select></label><button class="btn primary full" type="submit">Save profile</button></form><div id="profileMessage" class="message"></div></article></section>
+  </main>
+  <div class="toast" id="toast" aria-live="polite"></div>
 </body>
 </html>
