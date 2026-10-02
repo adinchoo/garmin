@@ -1,0 +1,61 @@
+name: Garmin Activities Backfill
+
+on:
+  workflow_dispatch:
+    inputs:
+      max_activities:
+        description: "Maximum activities to backfill. Use 0 for all."
+        required: true
+        default: "50"
+      batch_size:
+        description: "Batch size"
+        required: true
+        default: "25"
+      delay_seconds:
+        description: "Delay between batches"
+        required: true
+        default: "30"
+
+concurrency:
+  group: garmin-backfill
+  cancel-in-progress: false
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      GARMIN_EMAIL: ${{ secrets.GARMIN_EMAIL }}
+      GARMIN_PASSWORD: ${{ secrets.GARMIN_PASSWORD }}
+      USER_ID: ${{ secrets.USER_ID }}
+      GARMIN_TOKEN_STORE: ./garmin_tokens
+      BACKFILL_MAX_ACTIVITIES: ${{ github.event.inputs.max_activities }}
+      BACKFILL_BATCH_SIZE: ${{ github.event.inputs.batch_size }}
+      BACKFILL_DELAY_SECONDS: ${{ github.event.inputs.delay_seconds }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
+      - name: Restore Garmin token cache
+        uses: actions/cache@v4
+        with:
+          path: ./garmin_tokens
+          key: garmin-tokens-${{ github.repository }}
+          restore-keys: |
+            garmin-tokens-
+
+      - name: Run Garmin activities backfill
+        run: python backfill_activities.py

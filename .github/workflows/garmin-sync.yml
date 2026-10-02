@@ -1,0 +1,29 @@
+name: Garmin Sync
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Runs every day at 00:30 UTC
+    - cron: "30 0 * * *"
+
+concurrency:
+  group: garmin-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE files directly through GitHub web UI.
+
+---
+
+## 6. Test manually
+
+Go to:
+
+```text
+GitHub repo → Actions → Garmin Sync → Run workflow
