@@ -1,1 +1,1 @@
-No v6 database migration is required. Keep the existing v3/v4 schema and photo-analysis patch.
+No database migration is required.
