@@ -62,19 +62,33 @@ def log_sync(status, message):
 
 def garmin_login():
     api = Garmin(GARMIN_EMAIL, GARMIN_PASSWORD)
+    disable_fresh_login = os.getenv("GARMIN_DISABLE_FRESH_LOGIN", "0") == "1"
 
     try:
         if os.path.exists(GARMIN_TOKEN_STORE):
             print("Loading saved Garmin session...")
             api.garth.load(GARMIN_TOKEN_STORE)
 
-            # Test saved session
+            restore_garmin_identity(api)
+
+            if not getattr(api, "display_name", None):
+                raise Exception("Garmin display_name is missing after token load.")
+
             api.get_user_summary(date.today().isoformat())
 
             print("Garmin saved session works.")
             return api
+        else:
+            print(f"Garmin token store not found: {GARMIN_TOKEN_STORE}")
+
     except Exception as e:
         print(f"Saved Garmin session failed: {e}")
+
+    if disable_fresh_login:
+        raise Exception(
+            "Fresh Garmin login is disabled in GitHub Actions. "
+            "Create a new local garmin_tokens folder and update GARMIN_TOKENS_TGZ_BASE64."
+        )
 
     print("Logging in to Garmin...")
     api.login()

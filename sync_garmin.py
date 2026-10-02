@@ -206,20 +206,64 @@ def sync_activities(api, start_date, end_date):
             print(f"Supabase activity insert failed: {e}")
 
 
+def restore_garmin_identity(api):
+    """
+    After api.garth.load(token_store), garminconnect may not automatically
+    populate api.display_name. Without it, get_user_summary() calls:
+    /daily/None?calendarDate=...
+    and Garmin returns 403.
+    """
+    try:
+        profile = getattr(api.garth, "profile", None) or {}
+
+        display_name = (
+            profile.get("displayName")
+            or profile.get("display_name")
+            or profile.get("userName")
+            or profile.get("username")
+        )
+
+        if not display_name:
+            try:
+                social_profile = api.garth.connectapi(
+                    "/userprofile-service/socialProfile"
+                )
+                display_name = (
+                    social_profile.get("displayName")
+                    or social_profile.get("userName")
+                    or social_profile.get("username")
+                )
+            except Exception as e:
+                print(f"Could not fetch Garmin social profile: {e}")
+
+        if display_name:
+            api.display_name = display_name
+            print(f"Garmin display name restored: {display_name}")
+        else:
+            print("Garmin display name could not be restored.")
+
+    except Exception as e:
+        print(f"Garmin identity restore failed: {e}")
+
+
 def garmin_login():
     token_store = os.getenv("GARMIN_TOKEN_STORE", "./garmin_tokens")
     disable_fresh_login = os.getenv("GARMIN_DISABLE_FRESH_LOGIN", "0") == "1"
 
     api = Garmin(GARMIN_EMAIL, GARMIN_PASSWORD)
 
-    # Try saved Garmin session first
     try:
         if os.path.exists(token_store):
             print("Loading saved Garmin session...")
             api.garth.load(token_store)
 
-            # Test session
+            restore_garmin_identity(api)
+
+            if not getattr(api, "display_name", None):
+                raise Exception("Garmin display_name is missing after token load.")
+
             api.get_user_summary(date.today().isoformat())
+
             print("Garmin saved session works.")
             return api
         else:
@@ -234,7 +278,6 @@ def garmin_login():
             "Create a new local garmin_tokens folder and update GARMIN_TOKENS_TGZ_BASE64."
         )
 
-    # Fresh login only if saved session fails
     print("Logging in to Garmin...")
     api.login()
 
