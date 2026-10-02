@@ -3,7 +3,7 @@ name: Garmin Sync
 on:
   workflow_dispatch:
   schedule:
-    # Runs daily at 7:00 AM Malaysia time
+    # 7:00 AM Malaysia time
     - cron: "0 23 * * *"
 
 concurrency:
@@ -24,30 +24,23 @@ jobs:
       DAYS_BACK: "3"
       GARMIN_TOKEN_STORE: ./garmin_tokens
       GARMIN_DISABLE_FRESH_LOGIN: "1"
+      GARMIN_TOKENS_TGZ_BASE64: ${{ secrets.GARMIN_TOKENS_TGZ_BASE64 }}
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Restore Garmin token cache
-        id: garmin-cache
-        uses: actions/cache@v4
-        with:
-          path: ./garmin_tokens
-          key: garmin-tokens-${{ github.run_id }}
-          restore-keys: |
-            garmin-tokens-
-
-      - name: Restore Garmin tokens from secret if cache missing
-        if: steps.garmin-cache.outputs.cache-hit != 'true'
+      - name: Restore Garmin tokens from secret
         run: |
-          echo "${{ secrets.GARMIN_TOKENS_TGZ_BASE64 }}" | base64 -d > garmin_tokens.tar.gz
+          rm -rf garmin_tokens garmin_tokens.tar.gz
+          if [ -z "$GARMIN_TOKENS_TGZ_BASE64" ]; then
+            echo "GARMIN_TOKENS_TGZ_BASE64 secret is empty."
+            exit 1
+          fi
+          printf '%s' "$GARMIN_TOKENS_TGZ_BASE64" | tr -d '\r\n ' | base64 -d > garmin_tokens.tar.gz
           tar -xzf garmin_tokens.tar.gz
-          echo "Garmin tokens restored from secret."
-
-      - name: Check Garmin token folder
-        run: |
-          ls -la garmin_tokens || true
+          echo "Garmin token folder restored."
+          ls -la garmin_tokens
 
       - name: Set up Python
         uses: actions/setup-python@v5
