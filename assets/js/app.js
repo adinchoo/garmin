@@ -1,17 +1,21 @@
 const VIEW_META={home:["OVERVIEW","Home"],activities:["TRAINING","Activities"],coach:["INTELLIGENCE","AI Coach"],nutrition:["FUEL","Nutrition"],trends:["INSIGHTS","Trends"],more:["YOUR SPACE","More"],profile:["ACCOUNT","Profile & Goals"]};
 document.addEventListener("DOMContentLoaded",()=>{
   if("serviceWorker" in navigator) navigator.serviceWorker.register("./service-worker.js").catch(console.error);
-  const t=localStorage.getItem("fitness-theme");
-  if(t) document.documentElement.dataset.theme=t;
+  // default dark, but respect user choice (light)
+  const saved=localStorage.getItem("fitness-theme");
+  if(saved){
+    document.documentElement.dataset.theme=saved;
+  }else{
+    document.documentElement.dataset.theme="dark";
+    localStorage.setItem("fitness-theme","dark");
+  }
   document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>showView(b.dataset.go));
   document.querySelectorAll("[data-action=refresh]").forEach(b=>b.onclick=()=>window.loadDashboard?.(true));
   document.getElementById("themeButton")?.addEventListener("click",toggleTheme);
   document.getElementById("fsButton")?.addEventListener("click",()=>window.PWAFS?.toggle());
   document.getElementById("fsFab")?.addEventListener("click",()=>window.PWAFS?.toggle());
-  // keyboard shortcut F for fullscreen
   document.addEventListener('keydown', e=>{
     if(e.key.toLowerCase()==='f' && !e.metaKey && !e.ctrlKey && e.target.tagName!=='INPUT' && e.target.tagName!=='SELECT'){
-      // avoid interfering with typing
       if(document.body.classList.contains('dashboard-page')) window.PWAFS?.toggle();
     }
   });
@@ -42,10 +46,14 @@ function enableSwipe(){
   },{passive:true})
 }
 function toggleTheme(){
-  const n=document.documentElement.dataset.theme==="light"?"dark":"light";
+  const cur=document.documentElement.dataset.theme;
+  const n=cur==="light"?"dark":"light";
   document.documentElement.dataset.theme=n;
   localStorage.setItem("fitness-theme",n);
   dispatchEvent(new Event("themechange"));
+  // update meta theme-color
+  const meta=document.querySelector('meta[name="theme-color"]');
+  if(meta) meta.content=n==="light"?"#EEF2F8":"#050914";
 }
 function textContent(id,v){const e=document.getElementById(id);if(e) e.textContent=v;}
 window.showView=showView;

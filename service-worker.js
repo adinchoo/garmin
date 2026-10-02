@@ -1,4 +1,4 @@
-const CACHE="fitness-ai-hub-v8.0.0-fullscreen";
+const CACHE="fitness-ai-hub-v8.2.0-iphone14-flush";
 const SHELL=[
   "./","./index.html","./dashboard.html","./manifest.json",
   "./assets/css/app.css",
