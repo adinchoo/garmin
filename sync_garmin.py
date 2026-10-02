@@ -208,6 +208,7 @@ def sync_activities(api, start_date, end_date):
 
 def garmin_login():
     token_store = os.getenv("GARMIN_TOKEN_STORE", "./garmin_tokens")
+    disable_fresh_login = os.getenv("GARMIN_DISABLE_FRESH_LOGIN", "0") == "1"
 
     api = Garmin(GARMIN_EMAIL, GARMIN_PASSWORD)
 
@@ -221,8 +222,17 @@ def garmin_login():
             api.get_user_summary(date.today().isoformat())
             print("Garmin saved session works.")
             return api
+        else:
+            print(f"Garmin token store not found: {token_store}")
+
     except Exception as e:
         print(f"Saved Garmin session failed: {e}")
+
+    if disable_fresh_login:
+        raise Exception(
+            "Fresh Garmin login is disabled in GitHub Actions. "
+            "Create a new local garmin_tokens folder and update GARMIN_TOKENS_TGZ_BASE64."
+        )
 
     # Fresh login only if saved session fails
     print("Logging in to Garmin...")

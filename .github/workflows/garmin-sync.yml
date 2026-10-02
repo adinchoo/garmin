@@ -3,8 +3,8 @@ name: Garmin Sync
 on:
   workflow_dispatch:
   schedule:
-    # Runs every day at 00:30 UTC
-    - cron: "30 0 * * *"
+    # Runs daily at 7:00 AM Malaysia time
+    - cron: "0 23 * * *"
 
 concurrency:
   group: garmin-sync
@@ -21,12 +21,33 @@ jobs:
       GARMIN_EMAIL: ${{ secrets.GARMIN_EMAIL }}
       GARMIN_PASSWORD: ${{ secrets.GARMIN_PASSWORD }}
       USER_ID: ${{ secrets.USER_ID }}
-      DAYS_BACK: ${{ secrets.DAYS_BACK }}
+      DAYS_BACK: "3"
       GARMIN_TOKEN_STORE: ./garmin_tokens
+      GARMIN_DISABLE_FRESH_LOGIN: "1"
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Restore Garmin token cache
+        id: garmin-cache
+        uses: actions/cache@v4
+        with:
+          path: ./garmin_tokens
+          key: garmin-tokens-${{ github.run_id }}
+          restore-keys: |
+            garmin-tokens-
+
+      - name: Restore Garmin tokens from secret if cache missing
+        if: steps.garmin-cache.outputs.cache-hit != 'true'
+        run: |
+          echo "${{ secrets.GARMIN_TOKENS_TGZ_BASE64 }}" | base64 -d > garmin_tokens.tar.gz
+          tar -xzf garmin_tokens.tar.gz
+          echo "Garmin tokens restored from secret."
+
+      - name: Check Garmin token folder
+        run: |
+          ls -la garmin_tokens || true
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -36,14 +57,6 @@ jobs:
 
       - name: Install Python dependencies
         run: pip install -r requirements.txt
-
-      - name: Restore Garmin token cache
-        uses: actions/cache@v4
-        with:
-          path: ./garmin_tokens
-          key: garmin-tokens-${{ github.repository }}
-          restore-keys: |
-            garmin-tokens-
 
       - name: Run Garmin sync
         run: python sync_garmin.py
