@@ -1,15 +1,20 @@
-/** Fitness AI Hub - Fullscreen PWA Manager v8 **/
+/** Fitness AI Hub - Fullscreen PWA Manager v8.0.1 - Fixed for bottom nav flush **/
 (function(){
   const html = document.documentElement;
   const setVH = ()=>{
-    const vh = window.innerHeight * 0.01;
+    const h = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+    const vh = h * 0.01;
     html.style.setProperty('--vh', `${vh}px`);
-    html.style.setProperty('--app-height', `${window.innerHeight}px`);
-    html.style.setProperty('--app-dvh', `${window.innerHeight}px`);
+    html.style.setProperty('--app-height', `${h}px`);
+    html.style.setProperty('--app-dvh', `${h}px`);
   };
   setVH();
+  if(window.visualViewport){
+    window.visualViewport.addEventListener('resize', setVH, {passive:true});
+    window.visualViewport.addEventListener('scroll', setVH, {passive:true});
+  }
   window.addEventListener('resize', setVH, {passive:true});
-  window.addEventListener('orientationchange', ()=> setTimeout(setVH, 150));
+  window.addEventListener('orientationchange', ()=> setTimeout(setVH, 200));
 
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
   const isStandalone = window.matchMedia('(display-mode: standalone)').matches 
@@ -69,7 +74,7 @@
     setVH();
   });
 
-  // Wake lock (optional, keeps screen on during workout view)
+  // Wake lock (keeps screen on during workout view)
   let wakeLock = null;
   async function requestWakeLock(){
     try{
@@ -87,7 +92,7 @@
     window.removeEventListener('click', initWL);
   }, {once:true});
 
-  // Install prompt handling (optional but nice)
+  // Install prompt handling
   let deferredPrompt = null;
   window.addEventListener('beforeinstallprompt', e=>{
     e.preventDefault();
