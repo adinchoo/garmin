@@ -228,7 +228,7 @@ async function saveProfile(event) {
 function setMessage(id, value, type) { const el = byId(id); if (el) { el.textContent = value; el.className = `message ${type}`; } }
 function text(id, value) { setText(id, value); }
 function formatDuration(minutes) { const m = Number(minutes) || 0; return m >= 60 ? `${Math.floor(m / 60)}h ${m % 60}m` : `${m}m`; }
-function formatDateTime(value) { if (!value) return "Unknown date"; return new Date(String(value).includes("T") ? value : String(value).replace(" ", "T") + "Z").toLocaleString([], { day: "numeric", month: "short", hour: "numeric", minute: "2-digit" }); }
+function formatDateTime(value) { if (!value) return "Date unavailable"; return new Date(String(value).includes("T") ? value : String(value).replace(" ", "T") + "Z").toLocaleString([], { day: "numeric", month: "short", hour: "numeric", minute: "2-digit" }); }
 function escapeHtml(value) { return String(value ?? "").replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char])); }
 function capitalize(value) { return String(value || "").replace(/^./, char => char.toUpperCase()); }
 function formatActivityType(value) { return String(value || "Other").replaceAll("_", " ").replace(/\b\w/g, char => char.toUpperCase()); }

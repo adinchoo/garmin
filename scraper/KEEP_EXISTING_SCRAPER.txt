@@ -1,1 +1,0 @@
-Keep the existing working Garmin scraper and local .env.

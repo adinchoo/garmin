@@ -1,1 +1,0 @@
-Keep the deployed analyze-health function using gemini-3.8-flash.
