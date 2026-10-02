@@ -17,13 +17,33 @@ jobs:
 
     env:
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE files directly through GitHub web UI.
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      GARMIN_EMAIL: ${{ secrets.GARMIN_EMAIL }}
+      GARMIN_PASSWORD: ${{ secrets.GARMIN_PASSWORD }}
+      USER_ID: ${{ secrets.USER_ID }}
+      DAYS_BACK: ${{ secrets.DAYS_BACK }}
+      GARMIN_TOKEN_STORE: ./garmin_tokens
 
----
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-## 6. Test manually
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
 
-Go to:
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
 
-```text
-GitHub repo → Actions → Garmin Sync → Run workflow
+      - name: Restore Garmin token cache
+        uses: actions/cache@v4
+        with:
+          path: ./garmin_tokens
+          key: garmin-tokens-${{ github.repository }}
+          restore-keys: |
+            garmin-tokens-
+
+      - name: Run Garmin sync
+        run: python sync_garmin.py
