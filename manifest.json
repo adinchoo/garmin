@@ -3,12 +3,30 @@
   "name": "Fitness AI Hub",
   "short_name": "FIT AI",
   "description": "Garmin, nutrition and AI fitness intelligence",
-  "start_url": "./dashboard.html",
+  "start_url": "./dashboard.html?utm_source=pwa",
   "scope": "./",
-  "display": "standalone",
-  "orientation": "portrait-primary",
+  "display": "fullscreen",
+  "display_override": [
+    "fullscreen",
+    "standalone",
+    "minimal-ui",
+    "browser"
+  ],
+  "orientation": "any",
   "background_color": "#050914",
   "theme_color": "#050914",
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  },
+  "handle_links": "preferred",
+  "categories": [
+    "health",
+    "fitness",
+    "lifestyle"
+  ],
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
   "icons": [
     {
       "src": "./assets/icons/icon-192.png",
