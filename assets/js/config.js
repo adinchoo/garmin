@@ -1,1 +1,8 @@
-const APP_CONFIG=Object.freeze({SUPABASE_URL:"https://jxvwneujgriufbezwjuf.supabase.co",SUPABASE_ANON_KEY:"sb_publishable_avD9WTcGNsRVCiwrjxQxTg_AI7x33zc",AI_FUNCTION_NAME:"analyze-health",MEAL_FUNCTION_NAME:"analyze-meal",DAILY_STEP_GOAL:10000,DAILY_CALORIE_GOAL:2000});
+const APP_CONFIG=Object.freeze({
+  SUPABASE_URL:"https://jxvwneujgriufbezwjuf.supabase.co",
+  SUPABASE_ANON_KEY:"sb_publishable_avD9WTcGNsRVCiwrjxQxTg_AI7x33zc",
+  AI_FUNCTION_NAME:"analyze-health",
+  MEAL_FUNCTION_NAME:"analyze-meal",
+  DAILY_STEP_GOAL:10000,
+  DAILY_CALORIE_GOAL:2000
+});
