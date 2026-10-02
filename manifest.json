@@ -1,32 +1,23 @@
 {
-  "id": "./",
+  "id": "./dashboard.html",
   "name": "Fitness AI Hub",
   "short_name": "FIT AI",
   "description": "Garmin, nutrition and AI fitness intelligence",
-  "start_url": "./dashboard.html?utm_source=pwa",
+  "start_url": "./dashboard.html?source=pwa-v9",
   "scope": "./",
-  "display": "fullscreen",
+  "display": "standalone",
   "display_override": [
     "fullscreen",
-    "standalone",
-    "minimal-ui",
-    "browser"
+    "standalone"
   ],
-  "orientation": "any",
+  "orientation": "portrait-primary",
   "background_color": "#050914",
   "theme_color": "#050914",
-  "launch_handler": {
-    "client_mode": "navigate-existing"
-  },
-  "handle_links": "preferred",
   "categories": [
     "health",
     "fitness",
     "lifestyle"
   ],
-  "edge_side_panel": {
-    "preferred_width": 400
-  },
   "icons": [
     {
       "src": "./assets/icons/icon-192.png",
@@ -35,16 +26,16 @@
       "purpose": "any"
     },
     {
-      "src": "./assets/icons/icon-maskable-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
-    },
-    {
       "src": "./assets/icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
+    },
+    {
+      "src": "./assets/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }
