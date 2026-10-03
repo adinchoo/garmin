@@ -71,3 +71,20 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 @media (prefers-reduced-motion:reduce) {
   body.dashboard .bottom {transition:none!important}
 }
+
+/* v30: clickable profile avatar and avatar chooser */
+.topAvatar{border:0;cursor:pointer;padding:0;overflow:hidden;flex:0 0 auto;line-height:1;appearance:none;-webkit-appearance:none;color:#fff;background:var(--blue);}
+.topAvatar:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+.topAvatar img{display:block;width:100%;height:100%;object-fit:cover;border-radius:inherit}
+.avatarSettings{margin:0 0 12px}
+.avatarSettingsPreview{display:flex;align-items:center;gap:14px}
+.profileAvatarPreview{width:72px;height:72px;flex:0 0 72px;border-radius:50%;display:grid;place-items:center;overflow:hidden;background:linear-gradient(135deg,#287cf0,#7c5cff);color:#fff;font-size:2rem;font-weight:800;box-shadow:0 8px 25px #1769e025}
+.profileAvatarPreview img{width:100%;height:100%;object-fit:cover}
+.avatarSettingsPreview h3{margin:3px 0 5px}
+.avatarSettingsPreview p{margin:0;font-size:.78rem;line-height:1.4}
+.avatarChoices{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 12px}
+.avatarChoices button{width:44px;height:44px;border:1px solid var(--line);border-radius:14px;background:var(--bg);font-size:1.35rem;cursor:pointer}
+.avatarChoices button.active{border-color:var(--blue);box-shadow:0 0 0 2px color-mix(in srgb,var(--blue) 22%,transparent);background:var(--card2)}
+.avatarSettingsActions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.avatarSettingsActions label{display:inline-flex;align-items:center;justify-content:center;cursor:pointer;margin:0}
+#avatarMessage{font-size:.72rem;margin:10px 0 0}

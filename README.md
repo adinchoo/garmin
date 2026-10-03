@@ -95,3 +95,14 @@ Activity Details now includes an **AI Activity Analyzer** panel. It sends the se
 4. Deploy the updated static app files and open Activity Details.
 
 The function uses `gpt-4o-mini`, returns structured JSON, and only receives the selected activity facts and summarized stream statistics (not the user's email or profile). Analysis is informational, not medical advice. Without the function/API key, the local fallback can still summarize recorded metrics.
+
+### Troubleshooting `503 EDGE_FUNCTION_ERROR`
+
+The browser now shows a local activity summary when the AI endpoint fails and includes the endpoint error in the result. To restore model-generated analysis, check the Supabase Edge Function logs for `analyze-activity`, configure the `OPENAI_API_KEY` secret (never put it in frontend `config.js`), then deploy the updated function source:
+
+```sh
+supabase secrets set OPENAI_API_KEY=your_openai_api_key
+supabase functions deploy analyze-activity
+```
+
+If `EDGE_FUNCTION_ERROR` continues after redeployment, open the Supabase function invocation logs and inspect the runtime error for the matching request timestamp; a generic 503 log line by itself does not identify the exact root cause.
