@@ -31,3 +31,43 @@ html, body { width:100%; max-width:100%; margin:0; overscroll-behavior:none; }
 button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid rgba(23,105,224,.7);outline-offset:3px}
 @media(max-width:520px){.activityTools{gap:7px}.exportBtn{padding-inline:10px;font-size:12px}.activitySearch{padding-inline:11px}.activitySearch input{font-size:16px}.filterRail{overflow-x:auto;overscroll-behavior-inline:contain;scrollbar-width:none}.filterRail::-webkit-scrollbar{display:none}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+/* v29 compact bottom navigation + auto-hide state. Keep full-width edge-to-edge theme. */
+@media (max-width:760px) {
+  body.dashboard .scroll {
+    padding-bottom:calc(78px + var(--edge-safe-bottom));
+    scroll-padding-bottom:calc(82px + var(--edge-safe-bottom));
+  }
+  body.dashboard .bottom {
+    height:calc(54px + var(--edge-safe-bottom))!important;
+    min-height:calc(54px + var(--edge-safe-bottom))!important;
+    padding:2px 5px var(--edge-safe-bottom)!important;
+    transition:transform .24s cubic-bezier(.2,.75,.25,1),opacity .2s ease;
+    will-change:transform,opacity;
+  }
+  body.dashboard .bottom .nav {
+    height:46px!important;
+    min-height:46px!important;
+    padding:2px 1px!important;
+    gap:1px!important;
+    border-radius:10px;
+  }
+  body.dashboard .bottom .nav b {
+    width:25px!important;
+    height:25px!important;
+    font-size:18px!important;
+    line-height:1!important;
+  }
+  body.dashboard .bottom .nav span {
+    font-size:10px!important;
+    line-height:1.05!important;
+  }
+  body.dashboard .bottom.nav-auto-hidden {
+    transform:translate3d(0,110%,0)!important;
+    opacity:0!important;
+    pointer-events:none!important;
+  }
+}
+@media (prefers-reduced-motion:reduce) {
+  body.dashboard .bottom {transition:none!important}
+}

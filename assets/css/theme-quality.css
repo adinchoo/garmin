@@ -129,3 +129,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
   .healthDisclaimer,.promptHint {font-size:12px}
   .manualAiTools #foodPrompt {font-size:13px}
 }
+
+/* v28: toast notifications always auto-dismiss and never block interaction when hidden */
+.toast[hidden], .toast:not(.show) { display:none !important; visibility:hidden !important; opacity:0 !important; pointer-events:none !important; }
+.toast.show { visibility:visible; pointer-events:auto; }

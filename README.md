@@ -81,3 +81,17 @@ Static syntax and local-reference checks should be run before deployment. Live b
 - Pasted JSON is detected and mapped into the manual meal form automatically; review the estimates before saving.
 - Activity detail combines speed, heart rate, cadence, power, and elevation in one time-series chart. Each signal is normalized to a relative 0–100 scale for visual comparison, while tooltips display original units.
 - Service-worker cache version bumped to v21.
+
+
+## v26 — AI Activity Analyzer
+
+Activity Details now includes an **AI Activity Analyzer** panel. It sends the selected activity summary and available stream statistics to the `analyze-activity` Supabase Edge Function. If the function or AI provider is unavailable, the app displays a transparent local data summary instead of pretending that a model response was generated.
+
+### Enable model-generated activity analysis
+
+1. Install the Supabase CLI and link this project to your Supabase project.
+2. Add the provider key as an Edge Function secret: `supabase secrets set OPENAI_API_KEY=your_key_here`. Never put this key in browser JavaScript or the repository.
+3. Deploy the function: `supabase functions deploy analyze-activity`. Keep JWT verification enabled.
+4. Deploy the updated static app files and open Activity Details.
+
+The function uses `gpt-4o-mini`, returns structured JSON, and only receives the selected activity facts and summarized stream statistics (not the user's email or profile). Analysis is informational, not medical advice. Without the function/API key, the local fallback can still summarize recorded metrics.
