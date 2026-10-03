@@ -1,1 +1,1 @@
-window.APP_CONFIG=Object.freeze({SUPABASE_URL:"https://jxvwneujgriufbezwjuf.supabase.co",SUPABASE_ANON_KEY:"sb_publishable_avD9WTcGNsRVCiwrjxQxTg_AI7x33zc",AI_FUNCTION:"analyze-health",MEAL_FUNCTION:"analyze-meal",VERSION:"13.4.10"});
+window.APP_CONFIG=Object.freeze({SUPABASE_URL:"https://jxvwneujgriufbezwjuf.supabase.co",SUPABASE_ANON_KEY:"sb_publishable_avD9WTcGNsRVCiwrjxQxTg_AI7x33zc",AI_FUNCTION:"analyze-health",MEAL_FUNCTION:"analyze-meal",VERSION:"13.6.0-ai-paste-autofill"});

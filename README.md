@@ -95,3 +95,11 @@ Reduces the mobile readiness ring, reserves a dedicated bottom zone inside the H
 The mobile layout includes iOS safe-area spacing and a viewport-filling app shell. For the genuinely app-like, full-screen launch without Safari's address and tab bars, open the deployed site in Safari on the iPhone, tap **Share** → **Add to Home Screen**, enable **Open as Web App** if shown, then launch Fitness AI Hub from its Home Screen icon. A normal Safari tab cannot be forced by a website to hide Safari's browser controls; the Home Screen web app mode is the supported route.
 
 After deploying updates, close the existing Home Screen app completely and reopen it. If the old layout persists, open the site once in Safari while online so the service worker can update, then relaunch the Home Screen app.
+
+
+## v14.0.0 iPhone frontend rebuild
+
+- Reworked visual system and responsive layouts across Home, Activities, Trends, Nutrition, AI Coach, Profile, sign-in and account creation.
+- Retained existing HTML IDs, form IDs, data attributes and JavaScript modules to preserve existing app/data behavior. No database schema, Supabase configuration, Garmin sync, or AI/business logic was changed.
+- Added an iPhone-focused presentation stylesheet and bumped the service-worker cache to force updated assets to be fetched.
+- iOS Home Screen apps use standalone display and safe-area-aware layout. Safari does not permit a website to hide browser controls in a normal tab; add the site to the Home Screen and launch it from the icon for the app-like fullscreen experience.
