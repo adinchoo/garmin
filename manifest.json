@@ -3,7 +3,7 @@
   "name": "Fitness AI \u2014 Health & Training",
   "short_name": "Fitness AI",
   "description": "Your Garmin activity, recovery and nutrition dashboard.",
-  "start_url": "./dashboard.html?source=ios-pwa-v23.0.0",
+  "start_url": "./dashboard.html?source=ios-pwa-v24.0.0",
   "scope": "./",
   "display": "standalone",
   "display_override": [
