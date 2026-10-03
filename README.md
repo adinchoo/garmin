@@ -1,4 +1,4 @@
-# Fitness AI — iPhone Edition v15.0.0
+# Fitness AI — iPhone Edition v17.0.0
 
 A presentation-layer rebuild of the existing Fitness AI Hub frontend. The existing DOM hooks, JavaScript feature modules, Supabase integration, Garmin data logic, nutrition workflow, AI coach, and database schema have been retained.
 
@@ -12,7 +12,19 @@ A presentation-layer rebuild of the existing Fitness AI Hub frontend. The existi
 6. In Safari, tap **Share → Add to Home Screen**. If iOS offers **Open as Web App**, enable it. Launch from the new Home Screen icon.
 7. If a previous version was installed, remove the old Home Screen icon and add it again after deploying this version. Open the site once in Safari while online to allow the new service worker to update.
 
-## What changed in v15
+## What changed in v16
+
+- Fixed meal saving when the deployed Supabase `meals` table does not expose the optional analysis-summary column: the frontend tries supported summary-column names and falls back to saving core nutrition fields without the optional notes field.
+- Removed the post-save full page reload; successful meal saves trigger a dashboard data refresh.
+- Fixed coach report history loading only one report; the dashboard now requests the latest five.
+- Fixed the dashboard AI report renderer targeting a non-existent `#findings` element.
+- Prevented an unrelated or stale `data-id` click target from opening an undefined activity.
+- Avoided displaying a default 70% readiness score when no health/recovery signals are available.
+- Added missing left/right iOS safe-area CSS variables.
+- Hardened service-worker installation so one optional shell resource failing does not prevent the PWA update from installing; cache writes are tied to fetch lifecycle events and API traffic remains uncached.
+- Updated PWA cache and launch version identifiers to v16.
+
+## Earlier v15 design changes
 
 - New warm botanical design system with redesigned cards, typography, spacing, surfaces, buttons and status treatments.
 - Rebuilt mobile home hero into a compact information-first layout so readiness and key metrics appear sooner.
@@ -35,4 +47,4 @@ A website cannot hide Safari's address bar or the browser's own toolbar while ru
 - Every local asset in the service-worker shell list exists.
 - ZIP integrity checked after packaging.
 
-These are static checks, not a guarantee of zero runtime errors. Live Supabase authentication, real Garmin data, AI calls, and physical-device rendering must still be verified in your deployed environment.
+These are static checks, not a guarantee of zero runtime errors. The live Supabase schema, authentication, Garmin sync jobs, AI Edge Functions, and real-device rendering still require a deployment smoke test.

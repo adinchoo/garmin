@@ -1,19 +1,41 @@
 {
   "id": "./dashboard.html",
-  "name": "Fitness AI — Health & Training",
+  "name": "Fitness AI \u2014 Health & Training",
   "short_name": "Fitness AI",
   "description": "Your Garmin activity, recovery and nutrition dashboard.",
-  "start_url": "./dashboard.html?source=ios-pwa-v15.0.0",
+  "start_url": "./dashboard.html?source=ios-pwa-v17.0.0",
   "scope": "./",
   "display": "standalone",
-  "display_override": ["standalone", "minimal-ui"],
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
   "orientation": "portrait",
   "background_color": "#f4f5f0",
-  "theme_color": "#f4f5f0",
-  "categories": ["health", "fitness", "lifestyle"],
+  "theme_color": "#1769e0",
+  "categories": [
+    "health",
+    "fitness",
+    "lifestyle"
+  ],
   "icons": [
-    {"src":"./assets/icons/icon-192.png","sizes":"192x192","type":"image/png","purpose":"any"},
-    {"src":"./assets/icons/icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"},
-    {"src":"./assets/icons/apple-touch-icon.png","sizes":"180x180","type":"image/png","purpose":"any"}
+    {
+      "src": "./assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./assets/icons/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    }
   ]
 }
