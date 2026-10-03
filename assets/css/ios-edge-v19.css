@@ -20,3 +20,14 @@ html, body { width:100%; max-width:100%; margin:0; overscroll-behavior:none; }
   html, body { overscroll-behavior:none; }
   body.dashboard { height:100dvh; }
 }
+
+
+/* v20 activity discovery and iPhone interaction polish */
+.activityTools{display:flex;align-items:center;gap:10px;margin:18px 0 12px;min-width:0}
+.activitySearch{display:flex;align-items:center;gap:9px;flex:1;min-width:0;padding:0 14px;min-height:46px;border:1px solid var(--line,rgba(130,150,180,.22));border-radius:15px;background:var(--surface,rgba(255,255,255,.06))}
+.activitySearch span{font-size:23px;opacity:.7}.activitySearch input{width:100%;min-width:0;border:0;outline:0;background:transparent;color:inherit;font:inherit;box-shadow:none}
+.activitySearch input:focus{outline:none}.exportBtn{white-space:nowrap;min-height:44px;padding-inline:14px}.activityResults{margin:0 2px 10px;font-size:12px;opacity:.68}
+.filterRail button{min-height:38px;touch-action:manipulation}.activity[hidden]{display:none!important}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid rgba(23,105,224,.7);outline-offset:3px}
+@media(max-width:520px){.activityTools{gap:7px}.exportBtn{padding-inline:10px;font-size:12px}.activitySearch{padding-inline:11px}.activitySearch input{font-size:16px}.filterRail{overflow-x:auto;overscroll-behavior-inline:contain;scrollbar-width:none}.filterRail::-webkit-scrollbar{display:none}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}

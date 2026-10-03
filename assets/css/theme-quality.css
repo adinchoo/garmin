@@ -1,0 +1,131 @@
+/* Fitness AI v23 — strict, consistent light/dark themes and readable type scale. */
+:root {
+  --bg:#08111f; --surface:#0d1a2b; --card:#122239; --card2:#192d46;
+  --text:#f3f7fc; --muted:#a7b7ca; --line:#293d56;
+  --blue:#39bdf0; --green:#39bdf0; --red:#ff7187;
+  --shadow:0 8px 26px rgba(0,0,0,.24);
+  --theme-overlay:rgba(8,17,31,.94);
+  color-scheme:dark;
+  font-size:16px;
+}
+:root[data-theme="dark"] {
+  --bg:#08111f; --surface:#0d1a2b; --card:#122239; --card2:#192d46;
+  --text:#f3f7fc; --muted:#a7b7ca; --line:#293d56;
+  --blue:#39bdf0; --green:#39bdf0; --red:#ff7187;
+  --shadow:0 8px 26px rgba(0,0,0,.24); --theme-overlay:rgba(8,17,31,.94);
+  color-scheme:dark;
+}
+:root[data-theme="light"] {
+  --bg:#f3f6fb; --surface:#ffffff; --card:#ffffff; --card2:#eaf0f7;
+  --text:#17263a; --muted:#5b6d83; --line:#d4deea;
+  --blue:#087fbd; --green:#087fbd; --red:#c83e58;
+  --shadow:0 6px 22px rgba(26,48,77,.075); --theme-overlay:rgba(243,246,251,.96);
+  color-scheme:light;
+}
+html,body,body.dashboard,.app,.scroll {background:var(--bg);color:var(--text)}
+body,button,input,select,textarea {font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+body {font-size:16px;line-height:1.5;letter-spacing:0}
+button,input,select,textarea {font-size:16px;line-height:1.35}
+button {color:var(--text)}
+small,.muted {color:var(--muted)}
+.eyebrow {font-size:12px;line-height:1.35;letter-spacing:.12em;font-weight:800}
+label {font-size:13px;line-height:1.4;color:var(--muted)}
+input,select,textarea {background:var(--card2);color:var(--text);border-color:var(--line);min-height:48px}
+input::placeholder,textarea::placeholder {color:var(--muted);opacity:.82}
+.btn {font-size:14px;font-weight:750;line-height:1.25}
+.btn.primary,.primary {background:var(--blue);color:#fff;border-color:transparent}
+.panel,.metricCard,.trendKpi,.performanceStats,.weeklyGoalsPanel,.activity,.activityCard,
+.activitySearch,.sidePro,.coachSignal,.coachFocusBar,.weeklyBlueprint,.coachHistoryPanel,
+.profileGrid .panel,.mealHistory,.todaysPlan,.coachTimeline,.coachInsightGrid .panel,
+.coachBottomGrid .panel,.performanceGrid article,.weeklyGoalGrid article {
+  background:var(--card);color:var(--text);border-color:var(--line);box-shadow:var(--shadow)
+}
+.panelHead h3,h2,h3,h4,.metricCard b,.trendKpi b,.activity h3 {color:var(--text)}
+.metricCard small,.metricCard span,.activity p,.activity section span,.trendKpi small {color:var(--muted)}
+.side,.topbar,.sidePro,.icon,.periodTabs,.tabs,.authSide {background:var(--surface);color:var(--text);border-color:var(--line)}
+.side .nav,.bottom .nav {color:var(--muted)}
+.side .nav.active,.bottom .nav.active,.periodTabs button.active,.filterRail button.active,
+.coachModes button.active {background:color-mix(in srgb,var(--blue) 14%,var(--card));color:var(--blue);border-color:color-mix(in srgb,var(--blue) 34%,var(--line))}
+.filterRail button,.periodTabs button,.coachModes button {background:var(--card2);color:var(--text);border:1px solid var(--line)}
+.bottom {background:color-mix(in srgb,var(--surface) 96%,transparent);border-color:var(--line);box-shadow:0 -8px 26px color-mix(in srgb,var(--text) 8%,transparent)}
+.chartBadge,.rangeLabel,.trendUpdated {background:var(--card2);color:var(--muted);border-color:var(--line)}
+.insight,.planPrescription>div,.weeklyGoalGrid article,.performanceGrid article {background:var(--card2);color:var(--text);border-color:var(--line)}
+.coachPreview,.coachCommandHero,.trendsHero,.homeHero,.pageHero {
+  background:var(--surface);color:var(--text);border:1px solid var(--line);box-shadow:var(--shadow)
+}
+.homeHero {background:linear-gradient(135deg,var(--surface),var(--card));}
+.homeHero:before {border-color:color-mix(in srgb,var(--blue) 20%,transparent);box-shadow:0 0 0 34px color-mix(in srgb,var(--blue) 4%,transparent),0 0 0 70px color-mix(in srgb,var(--blue) 3%,transparent)}
+.heroCopy h2,.heroCopy .eyebrow,.heroDate,.heroLead,.heroReadiness,.heroReadiness h3,.heroReadiness p,.ring b,.ring small,
+.pageHero h2,.pageHero p,.trendsHero h2,.trendsHero p,.trendsHero .eyebrow,.coachCommandHero h2,.coachCommandHero p,
+.coachCommandHero .eyebrow,.coachPreview h3,.coachPreview>p:not(.eyebrow) {color:var(--text)}
+.heroLead,.heroDate,.heroReadiness p,.pageHero p,.coachPreview>p:not(.eyebrow) {color:var(--muted)}
+.heroReadiness,.trendScore,.coachReadinessCard {background:var(--card);color:var(--text);border:1px solid var(--line);backdrop-filter:none}
+.livePill {background:var(--card2);color:var(--blue);border:1px solid var(--line)}
+.heroReadiness .ring {background:conic-gradient(var(--blue) calc(var(--v)*1%),var(--card2) 0)}
+.ring:after,.weeklyGoalRing:after {background:var(--card)}
+.coachOrb,.pageHeroIcon {background:var(--card2);color:var(--blue)}
+.coachPreview .eyebrow,.statusLabel {color:var(--blue)}
+.coachPreview {background:var(--card);border:1px solid var(--line)}
+.trendsHero,.coachCommandHero {background:linear-gradient(135deg,var(--surface),var(--card));}
+.trendScore {background:var(--card2)}
+.coachCommandHero .coachReadinessRing:after {background:var(--card)}
+.coachReadinessRing {background:conic-gradient(var(--blue) calc(var(--v,0)*1%),var(--card2) 0)}
+.weeklyGoalGrid article i,.healthSignal i,.coachSignal i {background:color-mix(in srgb,var(--muted) 18%,var(--card2))}
+.activity section {border-color:var(--line)}
+.activitySearch input {background:transparent;color:var(--text)}
+.dialogClose,dialog {background:var(--surface);color:var(--text);border-color:var(--line)}
+dialog::backdrop {background:rgba(0,0,0,.62)}
+.toast {background:var(--text);color:var(--bg)}
+.iosInstall {background:var(--surface);color:var(--text);border-color:var(--line)}
+.iosInstall button {background:var(--card2);color:var(--text)}
+/* Type scale: avoid tiny, low-contrast labels on mobile while preserving hierarchy. */
+.topbar h1 {font-size:clamp(20px,2vw,24px);line-height:1.2}
+.view h2,.pageHero h2,.trendsHero h2,.coachCommandHero h2 {font-size:clamp(24px,3.5vw,34px);line-height:1.15;letter-spacing:-.035em}
+.panelHead h3,.coachPreview h3,.panel h3 {font-size:clamp(17px,2vw,20px);line-height:1.3}
+.metricCard small,.metricCard span,.heroReadiness p,.coachSignal span,.activityResults,
+.activity p,.chartBadge,.trendUpdated,.rangeLabel,.weeklyGoalGrid p,.weekDay>small,
+.coachReadinessCard p,.coachDisclaimer,.form label {font-size:12px;line-height:1.4}
+.trendKpi>div>span,.trendKpi>div>small,.weeklyGoalGrid small,.coachSignal small,.statusLabel,
+.healthSignal>span,.healthSignal small,.planPrescription>div>span {font-size:11px;line-height:1.35;letter-spacing:.045em}
+.bottom .nav span {font-size:11px;line-height:1.2}
+.bottom .nav b {font-size:20px;line-height:1.1}
+.activity section span {font-size:11px;line-height:1.35}
+.activity section b {font-size:13px;line-height:1.35}
+.weeklyGoalGrid p,.weekDay>small {font-size:11px}
+input,select,textarea {font-size:16px!important}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible {outline:3px solid color-mix(in srgb,var(--blue) 72%,transparent);outline-offset:2px}
+@media(max-width:760px) {
+  body {font-size:15px}
+  .topbar h1 {font-size:20px}
+  .eyebrow {font-size:11px}
+  .heroCopy h2 {font-size:clamp(27px,7vw,34px)}
+  .heroLead,.pageHero p,.coachCommandCopy>p:last-of-type {font-size:14px;line-height:1.5}
+  .heroButtons .btn,.coachActions .btn,.coachModes button,.filterRail button {font-size:13px}
+  .panelHead h3,.panel h3,.coachPreview h3 {font-size:17px}
+  .metricCard small,.metricCard span {font-size:12px}
+  .metricCard b {font-size:22px}
+  .trendKpi>div>span,.trendKpi>div>small,.weeklyGoalGrid small,.coachSignal small,
+  .statusLabel,.healthSignal>span,.healthSignal small,.planPrescription>div>span {font-size:11px}
+  .bottom .nav span {font-size:11px}
+  .coachSignal span,.coachReadinessCard p,.weeklyGoalGrid p,.weekDay>small {font-size:12px}
+  .activity section span {font-size:11px}
+  .activity section b {font-size:13px}
+}
+/* Keep secondary modules on the same theme surface; accents are reserved for data and actions. */
+.authHero {background:radial-gradient(circle at 20% 20%,color-mix(in srgb,var(--blue) 12%,transparent),transparent 36%),var(--bg);color:var(--text)}
+.authHero h1,.authHero p,.authHero .muted {color:var(--text)}
+.authCard,.authSide {background:var(--surface);color:var(--text);border-color:var(--line)}
+.generalHealthPanel {background:var(--card);color:var(--text);border-color:var(--line)}
+.healthSignal {background:var(--card2);color:var(--text);border-color:var(--line)}
+.healthDisclaimer {font-size:12px;line-height:1.5}
+.manualAiTools {background:var(--card2);color:var(--text);border-color:var(--line)}
+.promptPanel #foodPrompt {font-size:13px;line-height:1.5}
+.promptHint {font-size:12px;line-height:1.45}
+.aiBadge,.livePill,.statusLabel,.trendPulse,.manualBadge {font-size:11px;line-height:1.35;letter-spacing:.08em}
+.planPrescription>div>b,.coachWorkout b {font-size:14px;line-height:1.4}
+.weekDay>span {font-size:12px}
+@media(max-width:760px) {
+  .authCard h2 {font-size:23px}
+  .healthDisclaimer,.promptHint {font-size:12px}
+  .manualAiTools #foodPrompt {font-size:13px}
+}

@@ -3,7 +3,7 @@
   "name": "Fitness AI \u2014 Health & Training",
   "short_name": "Fitness AI",
   "description": "Your Garmin activity, recovery and nutrition dashboard.",
-  "start_url": "./dashboard.html?source=ios-pwa-v19.0.0",
+  "start_url": "./dashboard.html?source=ios-pwa-v23.0.0",
   "scope": "./",
   "display": "standalone",
   "display_override": [
@@ -11,8 +11,8 @@
     "minimal-ui"
   ],
   "orientation": "portrait",
-  "background_color": "#f3f7ff",
-  "theme_color": "#1769e0",
+  "background_color": "#08111f",
+  "theme_color": "#08111f",
   "categories": [
     "health",
     "fitness",

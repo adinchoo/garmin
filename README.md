@@ -1,11 +1,16 @@
-# Fitness AI — iPhone Edition v17.0.0
+## v22 update (2026-10-03)
+- Fuel opens on Manual Entry by default; AI prompt copy and JSON response parsing are available within the manual-entry page.
+- Trends now use one combined daily chart for stress, resting heart rate, sleep duration and steps, with normalized trend lines and original-value tooltips.
+- Home includes a General Health snapshot and a transparent estimated Body Battery when Garmin does not provide a recorded Body Battery value.
+
+# Fitness AI — iPhone Edition v20.0.0
 
 A presentation-layer rebuild of the existing Fitness AI Hub frontend. The existing DOM hooks, JavaScript feature modules, Supabase integration, Garmin data logic, nutrition workflow, AI coach, and database schema have been retained.
 
 ## Deploy
 
 1. Back up the currently deployed site and its environment/configuration.
-2. Upload the contents of the `rebuild/` folder to the same website root (not the outer ZIP folder).
+2. Upload the contents of the `garmin-main/` project folder to the website root (the folder containing `index.html`, `dashboard.html`, `manifest.json`, and `service-worker.js`). Do not upload the outer ZIP wrapper.
 3. Do not overwrite your Supabase project settings, secrets, Edge Functions, or scheduled Garmin workflow configuration unless you intend to update those separately.
 4. Deploy over HTTPS. Service workers and Home Screen web apps require a secure context (localhost is the development exception).
 5. Open the deployed URL in Safari on iPhone. If the link opened in an app's built-in browser, use its menu to open the page in Safari first.
@@ -55,3 +60,24 @@ These are static checks, not a guarantee of zero runtime errors. The live Supaba
 - Bottom navigation background now reaches the physical bottom edge; buttons remain clear of the iOS home indicator.
 - Updated manifest launch URL and service-worker cache version to v19.
 - iOS Safari browser chrome can only be hidden by launching as an installed Home Screen web app.
+
+
+## v20 activity dashboard improvements
+
+- Added activity search by activity name, type, and start date.
+- Added accessible activity-type filters with selected-state announcements.
+- Added one-tap CSV export for the loaded Garmin activity history.
+- Recovery trend now shows an unavailable state when heart-rate/stress data is missing instead of presenting a fabricated recovery percentage. The overall trend pulse remains an explicitly approximate composite when some inputs are unavailable.
+- Added mobile interaction polish, visible keyboard focus, reduced-motion support, and refreshed the service-worker cache version.
+
+## Validation notes
+
+Static syntax and local-reference checks should be run before deployment. Live behavior still depends on the configured Supabase schema, RLS policies, Edge Functions, Garmin sync secrets, and a real iPhone/Safari smoke test. The publishable Supabase key in `assets/js/config.js` is intended for browser use; security depends on correct Row Level Security policies and must never be replaced with a service-role key.
+
+
+## v21 update notes
+- Fuel screen now separates AI meal analysis and manual meal entry into dedicated tabbed pages.
+- AI prompt requests a strict JSON object using `meal_name`, `meal_type`, estimated calorie/macronutrient fields, `serving_size`, `ingredients`, and `analysis_summary`.
+- Pasted JSON is detected and mapped into the manual meal form automatically; review the estimates before saving.
+- Activity detail combines speed, heart rate, cadence, power, and elevation in one time-series chart. Each signal is normalized to a relative 0–100 scale for visual comparison, while tooltips display original units.
+- Service-worker cache version bumped to v21.

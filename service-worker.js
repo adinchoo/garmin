@@ -1,8 +1,8 @@
 'use strict';
-const CACHE_NAME = 'fitness-ai-shell-v19';
+const CACHE_NAME = 'fitness-ai-shell-v23';
 const SHELL = [
   './index.html', './dashboard.html', './offline.html', './manifest.json',
-  './assets/css/app.css', './assets/css/ios-fullscreen.css', './assets/css/ios-redesign.css', './assets/css/ios-next.css', './assets/css/ios-edge-v19.css',
+  './assets/css/app.css', './assets/css/ios-fullscreen.css', './assets/css/ios-redesign.css', './assets/css/ios-next.css', './assets/css/ios-edge-v19.css', './assets/css/theme-quality.css',
   './assets/js/config.js', './assets/js/core.js', './assets/js/splash.js', './assets/js/pwa.js', './assets/js/supabase.js',
   './assets/js/auth.js', './assets/js/nutrition.js', './assets/js/app.js', './assets/js/ui-v13.js', './assets/js/trends-v13.js', './assets/js/coach-v13.js',
   './assets/icons/icon-192.png', './assets/icons/icon-512.png', './assets/icons/apple-touch-icon.png'
