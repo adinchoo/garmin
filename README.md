@@ -89,3 +89,9 @@ Changes the floating navigation to a translucent dark navy glass material in dar
 ## v13.4.10 Today Status mobile sizing
 
 Reduces the mobile readiness ring, reserves a dedicated bottom zone inside the Home hero, constrains status text, and prevents the Today Status card from overlapping the hero controls or extending outside the visual container.
+
+## iPhone 14: full-screen Safari / Home Screen setup
+
+The mobile layout includes iOS safe-area spacing and a viewport-filling app shell. For the genuinely app-like, full-screen launch without Safari's address and tab bars, open the deployed site in Safari on the iPhone, tap **Share** → **Add to Home Screen**, enable **Open as Web App** if shown, then launch Fitness AI Hub from its Home Screen icon. A normal Safari tab cannot be forced by a website to hide Safari's browser controls; the Home Screen web app mode is the supported route.
+
+After deploying updates, close the existing Home Screen app completely and reopen it. If the old layout persists, open the site once in Safari while online so the service worker can update, then relaunch the Home Screen app.

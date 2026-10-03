@@ -404,3 +404,10 @@
   .heroReadiness .statusLabel{font-size:.45rem}
   .heroReadiness h3{font-size:.76rem}
 }
+
+/* Manual-first nutrition workflow */
+.nutritionMain{display:grid;gap:12px;align-content:start;min-width:0}.manualMealPanel,.promptPanel{min-width:0}.manualBadge{background:rgba(43,214,159,.13);color:var(--green)}.manualMealForm{display:grid;gap:13px;margin-top:16px}.manualMealForm .form{margin-top:0}.manualMacroGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.manualMacroGrid label{min-width:0}.manualMacroGrid input{min-width:0}.manualMealForm textarea,.promptPanel textarea{width:100%;resize:vertical;min-height:76px;border:1px solid var(--line);border-radius:13px;background:var(--card2);color:var(--text);padding:12px;font:inherit}.promptPanel{margin-top:0}.promptPanel .capture{margin:12px 0}.promptPreview{height:190px}.promptPanel #foodPrompt{min-height:230px;font-size:.78rem;line-height:1.5}.promptHint{font-size:.72rem;margin-bottom:0}.nutritionGrid>div:last-child{min-width:0}.nutritionGrid .mealHistory{margin-top:0}
+@media(max-width:760px){.manualMacroGrid{grid-template-columns:1fr 1fr}.manualMealForm .form{grid-template-columns:1fr}.promptPreview{height:170px}.promptPanel #foodPrompt{min-height:245px}.nutritionGrid{gap:10px}.nutritionMain{gap:10px}}
+
+/* Paste-and-parse AI food results */
+.pasteAiResult{display:grid;gap:9px;margin:14px 0;padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--card2)}.pasteAiResult textarea{width:100%;min-height:150px;resize:vertical;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--text);padding:12px;font:inherit;font-size:.86rem;line-height:1.5}.parseAiStatus{font-size:.78rem;margin:0}.parseAiSuccess{color:var(--green)}

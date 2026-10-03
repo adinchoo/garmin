@@ -61,7 +61,10 @@ def number(value):
     except (TypeError,ValueError):return None
 
 def thin(rows, maximum):
+    if maximum < 1:
+        raise ValueError("STREAM_MAX_POINTS must be at least 1")
     if len(rows)<=maximum:return rows
+    if maximum == 1:return [rows[0]]
     step=(len(rows)-1)/(maximum-1)
     indexes=sorted(set(round(i*step) for i in range(maximum)))
     return [rows[i] for i in indexes]
