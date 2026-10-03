@@ -1,5 +1,5 @@
 'use strict';
-const CACHE_NAME = 'fitness-ai-shell-v31';
+const CACHE_NAME = 'fitness-ai-shell-v33';
 const SHELL = [
   './index.html', './dashboard.html', './offline.html', './manifest.json',
   './assets/css/app.css', './assets/css/ios-fullscreen.css', './assets/css/ios-redesign.css', './assets/css/ios-next.css', './assets/css/ios-edge-v19.css', './assets/css/theme-quality.css', './assets/css/motion-v24.css', './assets/css/slide-v25.css', './assets/css/activity-analyzer-v26.css', './assets/css/topbar-standard-v31.css',
