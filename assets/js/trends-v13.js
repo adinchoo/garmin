@@ -1,7 +1,7 @@
 (() => {
   "use strict";
   let mixChart = null;
-  const colors = ["#28d8ff", "#35e0a4", "#ff9c52", "#ff6480", "#9b82ff", "#4f7cff"];
+  const colors = ["#28d8ff", "#60a5fa", "#ff9c52", "#ff6480", "#9b82ff", "#4f7cff"];
   const $ = selector => document.querySelector(selector);
   const n = value => Number.isFinite(Number(value)) ? Number(value) : 0;
   const set = (id,value) => { const el=document.getElementById(id); if(el) el.textContent=value; };

@@ -48,3 +48,10 @@ A website cannot hide Safari's address bar or the browser's own toolbar while ru
 - ZIP integrity checked after packaging.
 
 These are static checks, not a guarantee of zero runtime errors. The live Supabase schema, authentication, Garmin sync jobs, AI Edge Functions, and real-device rendering still require a deployment smoke test.
+
+
+## v19 iPhone edge-to-edge update
+- Added `assets/css/ios-edge-v19.css` to make the mobile dashboard and bottom navigation full-bleed.
+- Bottom navigation background now reaches the physical bottom edge; buttons remain clear of the iOS home indicator.
+- Updated manifest launch URL and service-worker cache version to v19.
+- iOS Safari browser chrome can only be hidden by launching as an installed Home Screen web app.
