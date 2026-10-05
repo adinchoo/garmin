@@ -247,11 +247,17 @@ def restore_garmin_identity(api):
 
 
 def garmin_login():
+    """
+    Attempts to login to Garmin with fallback mechanism:
+    1. First tries to load saved tokens from token_store
+    2. If that fails, attempts fresh login with email/password
+    3. Saves tokens for future use
+    """
     token_store = os.getenv("GARMIN_TOKEN_STORE", "./garmin_tokens")
-    disable_fresh_login = os.getenv("GARMIN_DISABLE_FRESH_LOGIN", "0") == "1"
 
     api = Garmin(GARMIN_EMAIL, GARMIN_PASSWORD)
 
+    # Try to load saved tokens
     try:
         if os.path.exists(token_store):
             print("Loading saved Garmin session...")
@@ -262,6 +268,7 @@ def garmin_login():
             if not getattr(api, "display_name", None):
                 raise Exception("Garmin display_name is missing after token load.")
 
+            # Validate that the session works
             api.get_user_summary(date.today().isoformat())
 
             print("Garmin saved session works.")
@@ -272,23 +279,24 @@ def garmin_login():
     except Exception as e:
         print(f"Saved Garmin session failed: {e}")
 
-    if disable_fresh_login:
-        raise Exception(
-            "Fresh Garmin login is disabled in GitHub Actions. "
-            "Create a new local garmin_tokens folder and update GARMIN_TOKENS_TGZ_BASE64."
-        )
-
-    print("Logging in to Garmin...")
-    api.login()
-
+    # Fallback: Fresh login with credentials
+    print("Attempting fresh Garmin login with credentials...")
     try:
-        os.makedirs(token_store, exist_ok=True)
-        api.garth.dump(token_store)
-        print("Garmin session saved.")
-    except Exception as e:
-        print(f"Could not save Garmin session: {e}")
+        api.login()
+        print("Fresh Garmin login successful.")
 
-    return api
+        # Save tokens for next time
+        try:
+            os.makedirs(token_store, exist_ok=True)
+            api.garth.dump(token_store)
+            print("Garmin session saved for future use.")
+        except Exception as e:
+            print(f"Warning: Could not save Garmin session: {e}")
+
+        return api
+
+    except Exception as e:
+        raise Exception(f"Fresh Garmin login failed: {e}")
 
 
 def main():
