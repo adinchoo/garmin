@@ -3,7 +3,7 @@ name: Garmin Sync
 on:
   workflow_dispatch:
   schedule:
-    # 7:00 AM Malaysia time
+    # 7:00 AM Malaysia time (11:00 PM UTC)
     - cron: "0 23 * * *"
 
 concurrency:
@@ -18,38 +18,55 @@ jobs:
     env:
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      USER_ID: ${{ secrets.USER_ID }}
+
       GARMIN_EMAIL: ${{ secrets.GARMIN_EMAIL }}
       GARMIN_PASSWORD: ${{ secrets.GARMIN_PASSWORD }}
-      USER_ID: ${{ secrets.USER_ID }}
-      DAYS_BACK: "3"
-      GARMIN_TOKEN_STORE: ./garmin_tokens
-      GARMIN_DISABLE_FRESH_LOGIN: "1"
       GARMIN_TOKENS_TGZ_BASE64: ${{ secrets.GARMIN_TOKENS_TGZ_BASE64 }}
+
+      GARMIN_TOKEN_STORE: ./garmin_tokens
+      GARMIN_ALLOW_FRESH_LOGIN: "1"
+      DAYS_BACK: "3"
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Restore Garmin tokens from secret
-        run: |
-          rm -rf garmin_tokens garmin_tokens.tar.gz
-          if [ -z "$GARMIN_TOKENS_TGZ_BASE64" ]; then
-            echo "GARMIN_TOKENS_TGZ_BASE64 secret is empty."
-            exit 1
-          fi
-          printf '%s' "$GARMIN_TOKENS_TGZ_BASE64" | tr -d '\r\n ' | base64 -d > garmin_tokens.tar.gz
-          tar -xzf garmin_tokens.tar.gz
-          echo "Garmin token folder restored."
-          ls -la garmin_tokens
+      - name: Restore Garmin token cache
+        uses: actions/cache@v4
+        with:
+          path: garmin_tokens
+          key: garmin-tokens-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            garmin-tokens-${{ runner.os }}-
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-          cache: "pip"
+          cache: pip
 
       - name: Install Python dependencies
-        run: pip install -r requirements.txt
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip check
+
+      - name: Check required environment variables
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "${SUPABASE_URL:-}" || { echo "::error::SUPABASE_URL is missing"; exit 1; }
+          test -n "${SUPABASE_SERVICE_ROLE_KEY:-}" || { echo "::error::SUPABASE_SERVICE_ROLE_KEY is missing"; exit 1; }
+          test -n "${USER_ID:-}" || { echo "::error::USER_ID is missing"; exit 1; }
+
+          if [ -z "${GARMIN_TOKENS_TGZ_BASE64:-}" ]; then
+            echo "::warning::GARMIN_TOKENS_TGZ_BASE64 is empty. Python will try cached tokens, then fresh login."
+          fi
+
+          if [ -z "${GARMIN_EMAIL:-}" ] || [ -z "${GARMIN_PASSWORD:-}" ]; then
+            echo "::warning::Garmin credentials are incomplete. Fresh-login fallback will be unavailable."
+          fi
 
       - name: Run Garmin sync
-        run: python sync_garmin.py
+        run: python -u sync_garmin.py
