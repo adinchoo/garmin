@@ -1,9 +1,4 @@
 import os
-import io
-import base64
-import shutil
-import tarfile
-from pathlib import Path
 from datetime import date, timedelta
 from dotenv import load_dotenv
 from garminconnect import Garmin
@@ -21,11 +16,11 @@ DAYS_BACK = int(os.getenv("DAYS_BACK", "3"))
 if not all([
     SUPABASE_URL,
     SUPABASE_SERVICE_ROLE_KEY,
+    GARMIN_EMAIL,
+    GARMIN_PASSWORD,
     USER_ID
 ]):
-    raise Exception(
-        "Missing SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, or USER_ID."
-    )
+    raise Exception("Missing environment variables. Check scraper/.env")
 
 db = create_client(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
 
@@ -211,238 +206,90 @@ def sync_activities(api, start_date, end_date):
             print(f"Supabase activity insert failed: {e}")
 
 
-GARMIN_TOKEN_STORE = Path(
-    os.getenv("GARMIN_TOKEN_STORE", "./garmin_tokens")
-)
-GARMIN_TOKEN_SECRET = "GARMIN_TOKENS_TGZ_BASE64"
-
-
-def token_files_exist(token_directory):
-    token_directory = Path(token_directory)
-    oauth1 = token_directory / "oauth1_token.json"
-    oauth2 = token_directory / "oauth2_token.json"
-    return (
-        oauth1.is_file()
-        and oauth2.is_file()
-        and oauth1.stat().st_size > 0
-        and oauth2.stat().st_size > 0
-    )
-
-
-def safe_extract_tar(archive, destination):
-    destination = Path(destination).resolve()
-    for member in archive.getmembers():
-        target = (destination / member.name).resolve()
-        if target != destination and destination not in target.parents:
-            raise RuntimeError(
-                f"Unsafe path in Garmin token archive: {member.name}"
-            )
-    archive.extractall(destination)
-
-
-def find_token_directory(root):
-    root = Path(root)
-    candidates = [root / "garmin_tokens", root]
-    candidates.extend(path.parent for path in root.rglob("oauth1_token.json"))
-
-    checked = set()
-    for candidate in candidates:
-        resolved = candidate.resolve()
-        if resolved in checked:
-            continue
-        checked.add(resolved)
-        if token_files_exist(candidate):
-            return candidate
-    return None
-
-
-def restore_garmin_tokens_from_secret():
-    """Restore Garmin tokens from the Base64 GitHub secret."""
-    encoded = os.getenv(GARMIN_TOKEN_SECRET, "").strip()
-    if not encoded:
-        print(
-            f"{GARMIN_TOKEN_SECRET} is empty. "
-            "Trying cached tokens or fresh login."
-        )
-        return False
-
-    temporary_directory = Path("./garmin_token_restore_temp")
-    print("Restoring Garmin tokens from GitHub Secret...")
-
-    try:
-        normalized = "".join(encoded.split())
-        try:
-            archive_bytes = base64.b64decode(normalized, validate=True)
-        except Exception as error:
-            raise RuntimeError(f"Invalid Base64 token secret: {error}") from error
-
-        if len(archive_bytes) < 100:
-            raise RuntimeError("Decoded Garmin token archive is too small.")
-
-        shutil.rmtree(temporary_directory, ignore_errors=True)
-        temporary_directory.mkdir(parents=True, exist_ok=True)
-
-        with tarfile.open(
-            fileobj=io.BytesIO(archive_bytes),
-            mode="r:gz"
-        ) as archive:
-            safe_extract_tar(archive, temporary_directory)
-
-        source_directory = find_token_directory(temporary_directory)
-        if source_directory is None:
-            files = sorted(
-                str(path.relative_to(temporary_directory))
-                for path in temporary_directory.rglob("*")
-                if path.is_file()
-            )
-            raise RuntimeError(
-                "Archive does not contain oauth1_token.json and "
-                f"oauth2_token.json. Files found: {files}"
-            )
-
-        # Do not remove valid cached tokens until the secret archive is valid.
-        shutil.rmtree(GARMIN_TOKEN_STORE, ignore_errors=True)
-        GARMIN_TOKEN_STORE.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copytree(source_directory, GARMIN_TOKEN_STORE)
-
-        if not token_files_exist(GARMIN_TOKEN_STORE):
-            raise RuntimeError("Extracted Garmin tokens failed validation.")
-
-        print("Garmin tokens restored successfully from GitHub Secret.")
-        return True
-
-    except Exception as error:
-        print(
-            "Secret token restoration failed: "
-            f"{type(error).__name__}: {error}"
-        )
-        print("Continuing with cached tokens or fresh login.")
-        return False
-
-    finally:
-        shutil.rmtree(temporary_directory, ignore_errors=True)
-
-
-def verify_garmin_session(api):
-    """Verify authentication without requiring display_name restoration."""
-    checks = []
-    for name in ("get_full_name", "get_user_profile", "get_devices"):
-        method = getattr(api, name, None)
-        if callable(method):
-            checks.append((name, method))
-
-    errors = []
-    for name, method in checks:
-        try:
-            result = method()
-            if result is not None:
-                print(f"Garmin session verified using {name}.")
-                return
-        except Exception as error:
-            errors.append(f"{name}: {type(error).__name__}: {error}")
-
-    # Last check for older garminconnect versions. It may require display_name.
+def restore_garmin_identity(api):
+    """
+    After api.garth.load(token_store), garminconnect may not automatically
+    populate api.display_name. Without it, get_user_summary() calls:
+    /daily/None?calendarDate=...
+    and Garmin returns 403.
+    """
     try:
         profile = getattr(api.garth, "profile", None) or {}
+
         display_name = (
             profile.get("displayName")
             or profile.get("display_name")
             or profile.get("userName")
             or profile.get("username")
         )
+
+        if not display_name:
+            try:
+                social_profile = api.garth.connectapi(
+                    "/userprofile-service/socialProfile"
+                )
+                display_name = (
+                    social_profile.get("displayName")
+                    or social_profile.get("userName")
+                    or social_profile.get("username")
+                )
+            except Exception as e:
+                print(f"Could not fetch Garmin social profile: {e}")
+
         if display_name:
             api.display_name = display_name
-            api.get_user_summary(date.today().isoformat())
-            print("Garmin session verified using the daily summary.")
-            return
-    except Exception as error:
-        errors.append(
-            f"daily summary: {type(error).__name__}: {error}"
-        )
+            print(f"Garmin display name restored: {display_name}")
+        else:
+            print("Garmin display name could not be restored.")
 
-    details = " | ".join(errors) if errors else "No verification method succeeded."
-    raise RuntimeError(f"Saved Garmin session verification failed. {details}")
-
-
-def load_saved_garmin_session():
-    if not token_files_exist(GARMIN_TOKEN_STORE):
-        print(
-            f"No complete Garmin token set found in {GARMIN_TOKEN_STORE}."
-        )
-        return None
-
-    print(f"Loading saved Garmin session from {GARMIN_TOKEN_STORE}...")
-    try:
-        api = Garmin()
-        api.garth.load(str(GARMIN_TOKEN_STORE))
-        verify_garmin_session(api)
-        print("Saved Garmin session works.")
-        return api
-    except Exception as error:
-        print(
-            "Saved Garmin session failed: "
-            f"{type(error).__name__}: {error}"
-        )
-        return None
-
-
-def fresh_garmin_login():
-    if not GARMIN_EMAIL or not GARMIN_PASSWORD:
-        raise RuntimeError(
-            "GARMIN_EMAIL or GARMIN_PASSWORD is missing, so fresh login "
-            "cannot be attempted."
-        )
-
-    print("Attempting fresh Garmin login using GitHub Secrets...")
-    api = Garmin(GARMIN_EMAIL, GARMIN_PASSWORD)
-    api.login()
-    verify_garmin_session(api)
-
-    GARMIN_TOKEN_STORE.mkdir(parents=True, exist_ok=True)
-    api.garth.dump(str(GARMIN_TOKEN_STORE))
-    print(f"Refreshed Garmin tokens saved to {GARMIN_TOKEN_STORE}.")
-    return api
+    except Exception as e:
+        print(f"Garmin identity restore failed: {e}")
 
 
 def garmin_login():
-    """
-    Authentication order:
-      1. Restore tokens from GARMIN_TOKENS_TGZ_BASE64.
-      2. Use existing/cached garmin_tokens if secret restoration fails.
-      3. Use GARMIN_EMAIL and GARMIN_PASSWORD as the final fallback.
-    """
-    cached_tokens_available = token_files_exist(GARMIN_TOKEN_STORE)
-    if cached_tokens_available:
-        print("Cached Garmin token folder detected.")
+    token_store = os.getenv("GARMIN_TOKEN_STORE", "./garmin_tokens")
+    disable_fresh_login = os.getenv("GARMIN_DISABLE_FRESH_LOGIN", "0") == "1"
 
-    restored = restore_garmin_tokens_from_secret()
-    if restored:
-        print("Using tokens restored from the GitHub Secret.")
-    elif cached_tokens_available:
-        print("Using cached Garmin tokens.")
-
-    api = load_saved_garmin_session()
-    if api is not None:
-        return api
-
-    allow_fresh_login = os.getenv(
-        "GARMIN_ALLOW_FRESH_LOGIN", "1"
-    ).strip().lower() in {"1", "true", "yes", "on"}
-
-    if not allow_fresh_login:
-        raise RuntimeError(
-            "Saved Garmin tokens failed and fresh login is disabled. "
-            "Set GARMIN_ALLOW_FRESH_LOGIN=1 or update "
-            "GARMIN_TOKENS_TGZ_BASE64."
-        )
+    api = Garmin(GARMIN_EMAIL, GARMIN_PASSWORD)
 
     try:
-        return fresh_garmin_login()
-    except Exception as error:
-        raise RuntimeError(
-            "All Garmin authentication methods failed. "
-            f"Final error: {type(error).__name__}: {error}"
-        ) from error
+        if os.path.exists(token_store):
+            print("Loading saved Garmin session...")
+            api.garth.load(token_store)
+
+            restore_garmin_identity(api)
+
+            if not getattr(api, "display_name", None):
+                raise Exception("Garmin display_name is missing after token load.")
+
+            api.get_user_summary(date.today().isoformat())
+
+            print("Garmin saved session works.")
+            return api
+        else:
+            print(f"Garmin token store not found: {token_store}")
+
+    except Exception as e:
+        print(f"Saved Garmin session failed: {e}")
+
+    if disable_fresh_login:
+        raise Exception(
+            "Fresh Garmin login is disabled in GitHub Actions. "
+            "Create a new local garmin_tokens folder and update GARMIN_TOKENS_TGZ_BASE64."
+        )
+
+    print("Logging in to Garmin...")
+    api.login()
+
+    try:
+        os.makedirs(token_store, exist_ok=True)
+        api.garth.dump(token_store)
+        print("Garmin session saved.")
+    except Exception as e:
+        print(f"Could not save Garmin session: {e}")
+
+    return api
+
 
 def main():
     print("Garmin sync started.")
