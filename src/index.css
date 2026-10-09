@@ -522,3 +522,16 @@ button, input, select {
     font-size: 0.8rem;
   }
 }
+
+
+/* This removes the square lock you have now */
+html, body, #root {
+  width: 100% !important;
+  height: 100dvh !important;
+}
+
+@media all and (display-mode: standalone), (display-mode: fullscreen) {
+  body {
+    overscroll-behavior: none;
+  }
+}
