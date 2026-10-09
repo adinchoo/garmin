@@ -1,62 +1,19 @@
-# Garmin — React rebuild
+# Fitness AI Hub
 
-This repo has been rebuilt as a modern React + TypeScript + Vite fitness dashboard.
+This repository is the static HTML/CSS/JavaScript Fitness AI application backed by Supabase. `index.html` is the single UI entry point. `dashboard.html` is retained only as a redirect for older links.
 
-## Stack
+## Main folders
+- `assets/css/` — application and responsive styling.
+- `assets/js/` — scripts loaded by `index.html`.
+- `assets/icons/`, `assets/images/`, `assets/splash/` — app media and PWA assets.
+- `supabase/functions/` — Edge Functions, including `analyze-meal`.
+- `supabase/*.sql` — database schema and migrations.
+- `sync_garmin.py`, `backfill_activities.py`, `enrich_activities.py` — Garmin data utilities.
 
-- React 18
-- TypeScript
-- Vite
-- Recharts
-- Zustand
-- React Router
-- Supabase client integration ready
+## Static deployment
+Publish the contents of this folder to the configured static host. No Node/Vite build is required for the active frontend.
 
-## Getting started
+## Supabase
+The frontend uses the project URL and publishable/anon key in `assets/js/config.js`. Never place a Supabase service-role key in browser code. Deploy Edge Functions separately; a frontend upload does not deploy `analyze-meal`.
 
-1. Install dependencies:
-   ```bash
-   npm install
-   ```
-2. Copy environment values if needed:
-   ```bash
-   cp .env.example .env.local
-   ```
-   Example contents:
-   ```env
-   VITE_SUPABASE_URL=https://your-project.supabase.co
-   VITE_SUPABASE_ANON_KEY=your-anon-key
-   VITE_APP_NAME=Garmin
-   ```
-3. Start the app:
-   ```bash
-   npm run dev
-   ```
-4. Build for production:
-   ```bash
-   npm run build
-   ```
-5. Preview the production build:
-   ```bash
-   npm run preview
-   ```
-
-## Architecture
-
-- `src/app` — app shell and route composition
-- `src/components` — reusable view components
-- `src/data` — mock and backend-adapter data
-- `src/lib` — environment and shared library utilities
-- `src/pages` — page-level screens
-- `src/services` — typed data loading and API layer
-- `src/store` — application state persistence
-- `src/types` — domain model definitions
-
-## Backend compatibility
-
-The app preserves the current Garmin + Supabase integration model, but swaps the legacy static presentation layer for a component-based frontend. The data layer is designed to be compatible with the existing Supabase schema while allowing structured mock fallbacks for local development.
-
-## Notes
-
-- The legacy static app remains in the repo for compatibility reference.
-- PWA support can be layered through Vite plugin tooling or a custom service worker later.
+See [CLEANUP-AND-DEPLOY.md](CLEANUP-AND-DEPLOY.md) for deployment and troubleshooting notes.
