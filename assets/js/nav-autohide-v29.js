@@ -6,6 +6,19 @@
     const scroller = document.getElementById('scroll');
     if (!nav || !scroller) return;
 
+    // Mobile navigation must remain available in the installed PWA. Auto-hiding
+    // the fixed bar can make it appear that the viewport has collapsed or that
+    // the page is not truly fullscreen, and can leave touch users without nav.
+    if (window.matchMedia('(max-width: 760px)').matches) {
+      nav.classList.remove('nav-auto-hidden');
+      nav.setAttribute('aria-hidden', 'false');
+      nav.inert = false;
+      nav.style.removeProperty('transform');
+      nav.style.removeProperty('opacity');
+      nav.style.removeProperty('pointer-events');
+      return;
+    }
+
     let hideTimer = 0;
     let lastScrollTop = scroller.scrollTop;
     let lastScrollAt = 0;
