@@ -11,7 +11,145 @@ const historyRoot=$("#mealList");if(historyRoot)historyRoot.innerHTML=S.meals.ma
 }
 function localFuelSuggestions(meals){const list=Array.isArray(meals)?meals:[],suggestions=[];if(!list.length)return [{title:"Start with a simple log",body:"Log what you eat and roughly when. After a few days, patterns around meal timing, variety and fueling become easier to spot."}];const protein=list.reduce((s,m)=>s+num(m.protein_g??m.estimated_protein_g),0)/list.length,fiber=list.reduce((s,m)=>s+num(m.fiber_g??m.estimated_fiber_g),0)/list.length,types=new Set(list.map(m=>String(m.meal_type||"").toLowerCase())),hours=list.map(m=>new Date(m.meal_time).getHours()).filter(Number.isFinite);if(!types.has("breakfast")&&list.length>=3)suggestions.push({title:"Check your morning fueling",body:"Your recent log has no breakfast entries. If you feel hungry or low on energy in the morning, consider an easy balanced option; skipping breakfast is not automatically a problem."});if(protein<15&&list.length>=2)suggestions.push({title:"Spread protein across meals",body:"The logged meals average under 15 g protein each. Consider adding foods such as eggs, tofu, tempeh, beans, yogurt, fish or chicken where they suit your preferences."});if(fiber<4&&list.length>=2)suggestions.push({title:"Add more fibre variety",body:"Fibre data is low or incomplete in the log. When practical, include vegetables, fruit, beans, oats or whole grains, and make sure portions are recorded accurately."});if(hours.length>=3&&Math.max(...hours)-Math.min(...hours)>=12)suggestions.push({title:"Look at meal timing",body:"Your entries span a long part of the day. If long gaps leave you very hungry or affect training energy, a planned meal or snack may help."});if(!suggestions.length)suggestions.push({title:"Keep the pattern consistent",body:"Your log alone does not show a clear concern. Keep recording typical portions and include a variety of foods; use hunger, energy and recovery to guide adjustments."});return suggestions.slice(0,3)}
 function renderFuelSuggestions(items,source="diary patterns",summary=""){const root=$("#fuelInsightsContent");if(!root)return;root.innerHTML=`<div class="fuelInsightSource">${esc(source)}</div>${summary?`<p class="fuelInsightSummary">${esc(summary)}</p>`:""}`+items.map((item,i)=>`<article class="fuelInsight"><span>${i+1}</span><div><strong>${esc(item.title||"Suggestion")}</strong><p>${esc(item.body||item.suggestion||"")}</p></div></article>`).join("");}
-async function analyzeFuelPattern(){const button=$("#fuelAnalyzePattern");if(!button)return;const now=new Date(),since=new Date(now);since.setDate(since.getDate()-13);const recent=S.meals.filter(m=>new Date(m.meal_time)>=since&&new Date(m.meal_time)<=now).map(m=>({meal_name:m.meal_name,meal_type:m.meal_type,meal_time:m.meal_time,calories:num(m.estimated_calories),protein_g:num(m.estimated_protein_g),carbs_g:num(m.estimated_carbs_g),fat_g:num(m.estimated_fat_g),fiber_g:num(m.estimated_fiber_g)}));if(!recent.length){renderFuelSuggestions(localFuelSuggestions([]),"Ready when you are");toast("Log a few meals first for useful pattern suggestions","ok");return}busy(button,true,"Analyzing your food log...");try{const{data:{session}}=await db.auth.getSession();if(!session?.access_token)throw new Error("Please sign in again.");const response=await fetch(`${APP_CONFIG.SUPABASE_URL}/functions/v1/analyze-eating-pattern`,{method:"POST",headers:{"Content-Type":"application/json",Authorization:`Bearer ${session.access_token}`,apikey:APP_CONFIG.SUPABASE_ANON_KEY},body:JSON.stringify({timezone:Intl.DateTimeFormat().resolvedOptions().timeZone||"local"})});const body=await response.json();if(!response.ok)throw new Error(body.error||"AI pattern analysis is unavailable");const suggestions=Array.isArray(body.suggestions)?body.suggestions:[];if(!suggestions.length)throw new Error("AI returned no suggestions");renderFuelSuggestions(suggestions,`AI analysis · ${body.period||"recent food log"}`,body.summary||"");toast("Eating pattern analysis updated")}catch(error){console.warn("AI eating pattern unavailable; using local diary insights",error);renderFuelSuggestions(localFuelSuggestions(recent),"Quick insights from your logged meals · AI service unavailable");toast(`Showing diary-based suggestions. AI request failed: ${error.message||"check function configuration"}`,"ok")}finally{busy(button,false)}}
+async function analyzeFuelPattern() {
+  const button = $("#fuelAnalyzePattern");
+  if (!button) return;
+
+  const now = new Date();
+  const since = new Date(now);
+  since.setDate(since.getDate() - 13);
+
+  const recent = S.meals
+    .filter((meal) => {
+      const mealTime = new Date(meal.meal_time);
+      return (
+        Number.isFinite(mealTime.getTime()) &&
+        mealTime >= since &&
+        mealTime <= now
+      );
+    })
+    .map((meal) => ({
+      meal_name: meal.meal_name,
+      meal_type: meal.meal_type,
+      meal_time: meal.meal_time,
+      calories: num(meal.estimated_calories),
+      protein_g: num(meal.estimated_protein_g),
+      carbs_g: num(meal.estimated_carbs_g),
+      fat_g: num(meal.estimated_fat_g),
+      fiber_g: num(meal.estimated_fiber_g)
+    }));
+
+  if (!recent.length) {
+    renderFuelSuggestions(
+      localFuelSuggestions([]),
+      "Ready when you are"
+    );
+
+    toast(
+      "Log a few meals first for useful pattern suggestions",
+      "ok"
+    );
+
+    return;
+  }
+
+  busy(button, true, "Analyzing your food log...");
+
+  try {
+    const {
+      data: { session },
+      error: sessionError
+    } = await db.auth.getSession();
+
+    if (sessionError) {
+      throw sessionError;
+    }
+
+    if (!session?.access_token) {
+      throw new Error("Please sign in again.");
+    }
+
+    const { data, error } = await db.functions.invoke(
+      "analyze-eating-pattern",
+      {
+        body: {
+          timezone:
+            Intl.DateTimeFormat().resolvedOptions().timeZone ||
+            "local"
+        },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`
+        }
+      }
+    );
+
+    if (error) {
+      let message =
+        error.message ||
+        "AI pattern analysis is unavailable.";
+
+      if (error.context) {
+        try {
+          const errorBody = await error.context.clone().json();
+
+          message =
+            errorBody?.error ||
+            errorBody?.message ||
+            errorBody?.msg ||
+            message;
+        } catch {
+          try {
+            const errorText = await error.context.clone().text();
+
+            if (errorText) {
+              message = errorText;
+            }
+          } catch {
+            // Keep original error message.
+          }
+        }
+      }
+
+      throw new Error(message);
+    }
+
+    if (data?.error) {
+      throw new Error(data.error);
+    }
+
+    const suggestions = Array.isArray(data?.suggestions)
+      ? data.suggestions
+      : [];
+
+    if (!suggestions.length) {
+      throw new Error("AI returned no suggestions.");
+    }
+
+    renderFuelSuggestions(
+      suggestions,
+      `AI analysis · ${data.period || "recent food log"}`,
+      data.summary || ""
+    );
+
+    toast("Eating pattern analysis updated", "success");
+  } catch (error) {
+    console.error("AI eating pattern analysis failed:", error);
+
+    renderFuelSuggestions(
+      localFuelSuggestions(recent),
+      "Quick insights from your logged meals · AI service unavailable"
+    );
+
+    toast(
+      `Showing diary-based suggestions. AI request failed: ${
+        error?.message || "Check function configuration"
+      }`,
+      "ok"
+    );
+  } finally {
+    busy(button, false);
+  }
+}
 function renderProfile(){for(let[k,v]of[["pName",S.profile.full_name],["pDob",S.profile.date_of_birth],["pHeight",S.profile.height_cm],["pTarget",S.profile.target_weight_kg],["pCalories",S.profile.daily_calorie_goal]])if($("#"+k))$("#"+k).value=v??""}function chart(id,type,labels,data,color){S.charts[id]?.destroy();let e=$("#"+id);if(!e||!window.Chart)return;S.charts[id]=new Chart(e,{type,data:{labels,datasets:[{data,borderColor:color,backgroundColor:type==="bar"?color:color+"25",fill:type==="line",tension:.3,pointRadius:1,borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{beginAtZero:type==="bar"}}}})}function charts(){const days=num($("#range").value)||14,daily=S.daily.slice(0,days).reverse(),sleep=S.sleep.slice(0,days).reverse(),body=S.body.slice(0,days).reverse(),dayKey=v=>String(v||"").slice(0,10),lab=v=>new Date(`${v}T00:00:00`).toLocaleDateString([],{month:"short",day:"numeric"});const sleepByDate=new Map(sleep.map(x=>[dayKey(x.sleep_date),x]));const rows=daily.map(h=>({date:dayKey(h.health_date),stress:h.stress_average==null?null:num(h.stress_average),hr:h.resting_heart_rate==null?null:num(h.resting_heart_rate),sleep:(sleepByDate.get(dayKey(h.health_date))?.duration_minutes==null?null:num(sleepByDate.get(dayKey(h.health_date)).duration_minutes)/60),steps:h.steps==null?null:num(h.steps)}));const specs=[{key:"stress",label:"Stress",unit:"score",color:"#ff9f43"},{key:"hr",label:"Resting HR",unit:"bpm",color:"#ff647f"},{key:"sleep",label:"Sleep",unit:"hours",color:"#9b82ff"},{key:"steps",label:"Steps",unit:"steps",color:"#22c7f2"}];const datasets=specs.map(cfg=>{const values=rows.map(r=>r[cfg.key]),valid=values.filter(v=>v!=null&&Number.isFinite(v)),min=valid.length?Math.min(...valid):0,max=valid.length?Math.max(...valid):0,span=max-min;return{label:cfg.label,data:rows.map(r=>{const rawValue=r[cfg.key];return rawValue==null?null:{x:lab(r.date),date:r.date,y:span?((rawValue-min)/span)*100:50,rawValue,unit:cfg.unit}}),borderColor:cfg.color,backgroundColor:cfg.color+"18",borderWidth:2,pointRadius:2,pointHoverRadius:5,tension:.28,spanGaps:false,fill:false}}).filter(ds=>ds.data.some(v=>v!==null));S.charts.trendHealthChart?.destroy();const el=$("#trendHealthChart");if(el&&window.Chart){S.charts.trendHealthChart=new Chart(el,{type:"line",data:{labels:rows.map(r=>lab(r.date)),datasets},options:{responsive:true,maintainAspectRatio:false,animation:false,parsing:{xAxisKey:"x",yAxisKey:"y"},interaction:{mode:"nearest",intersect:false},plugins:{legend:{display:true,position:"bottom",labels:{usePointStyle:true,boxWidth:14,color:getComputedStyle(document.documentElement).getPropertyValue("--text").trim()||"#eaf2ff",font:{size:11}}},tooltip:{callbacks:{title:items=>items[0]?.raw?.date?lab(items[0].raw.date):"",label:item=>{const p=item.raw;let value=Number(p.rawValue);if(p.unit==="steps")value=Math.round(value).toLocaleString();else value=value.toFixed(1);return `${item.dataset.label}: ${value} ${p.unit}`}}}},scales:{x:{type:"category",ticks:{color:"#94a3b8",maxRotation:0,autoSkip:true,maxTicksLimit:8},grid:{display:false}},y:{min:0,max:100,title:{display:true,text:"Relative trend (0–100)",color:"#94a3b8"},ticks:{stepSize:25,color:"#94a3b8"},grid:{color:"rgba(148,163,184,.10)"}}}}})}chart("weightChart","line",body.map(x=>lab(String(x.measured_at).slice(0,10))),body.map(x=>num(x.weight_kg)),"#60a5fa")}async function reportAI(){let b=$("#generate");busy(b,true,"Analyzing...");try{let{data:{session}}=await db.auth.getSession(),r=await fetch(`${APP_CONFIG.SUPABASE_URL}/functions/v1/${APP_CONFIG.AI_FUNCTION}`,{method:"POST",headers:{"Content-Type":"application/json",Authorization:`Bearer ${session.access_token}`,apikey:APP_CONFIG.SUPABASE_ANON_KEY},body:"{}"}),j=await r.json();if(!r.ok)throw Error(j.error||"Analysis failed");report(j.report||j);toast("AI report generated")}catch(e){toast(e.message,"error")}finally{busy(b,false)}}function report(r){let j=r;try{j=typeof r.report_json==="string"?JSON.parse(r.report_json):r.report_json||r}catch(parseError){console.warn("Invalid saved AI report JSON; displaying available summary only",parseError);j={summary:r.summary||"Saved report could not be parsed."}}set("aiScore",`${Math.round(num(r.readiness_score??j.readiness_score))}%`);set("aiTitle",j.headline||r.headline||"Wellness summary");set("aiSummary",j.summary||r.summary||"");(()=>{const target=$("#coachFindings");if(target)target.innerHTML=[...(j.key_findings||[]),...(j.recommendations||[])].map((x,i)=>`<div class="insight"><b>${i+1}</b><p>${esc(x)}</p></div>`).join("")||'<p class="empty">No findings yet.</p>'})()}async function openActivity(a){
 activeActivityIndex=S.activities.findIndex(x=>String(x.id)===String(a.id));
 if(activityStreamChart){activityStreamChart.destroy();activityStreamChart=null}
