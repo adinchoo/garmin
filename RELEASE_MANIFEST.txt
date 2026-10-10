@@ -1,4 +1,0 @@
-Fitness AI Hub Production Release v1.0.0
-Generated 2026-05-13
-Patches 001-006 merged
-Files: index.html login.html offline.html manifest.json service-worker.js v1.0.0 16 CSS 18+ JS 10 icons 2 migrations 2 functions

@@ -1,1 +1,0 @@
-:root{--nav-height:calc(64px + var(--sab,0px));}[data-view]{padding-bottom:var(--nav-height);}.bottomNav{position:fixed;bottom:0;left:0;right:0;z-index:100;padding-bottom:var(--sab);}
