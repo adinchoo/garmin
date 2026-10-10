@@ -1,1 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M100 412C116 226 210 102 408 70c-20 116-86 178-202 185 70 0 132-22 190-68-31 132-119 202-266 210-10 9-20 14-30 15z"/></svg>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <path d="M256 96 C 172 96 104 164 104 256 C 104 348 172 416 256 416 C 340 416 408 348 408 256 C 408 164 340 96 256 96 Z M 156 268 L 198 268 L 220 208 L 244 312 L 268 168 L 292 268 L 356 268" 
+        fill="black" fill-rule="evenodd"/>
+</svg>
