@@ -6,7 +6,7 @@
   const n = value => Number.isFinite(Number(value)) ? Number(value) : 0;
   const set = (id,value) => { const el=document.getElementById(id); if(el) el.textContent=value; };
   const width = (id,value) => { const el=document.getElementById(id); if(el) el.style.width=`${Math.max(5,Math.min(100,value))}%`; };
-  const dayKey = value => { const d=new Date(value); return Number.isNaN(d.getTime())?null:`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; };
+  const dayKey = value => { if(window.DateUtils){ return window.DateUtils.toLocalDateKeyFromInstant(value); } const d=new Date(value); return Number.isNaN(d.getTime())?null:`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; };
   const sport = value => { value=String(value||"").toLowerCase(); return value.includes("run")?"Run":value.includes("cycl")||value.includes("bike")?"Ride":value.includes("walk")||value.includes("hike")?"Walk":value.includes("swim")?"Swim":"Other"; };
   const formatDuration = seconds => { seconds=Math.max(0,Math.round(n(seconds))); const h=Math.floor(seconds/3600),m=Math.floor(seconds%3600/60),s=seconds%60; return h?`${h}h ${m}m`:`${m}m ${s}s`; };
   const formatPace = (seconds,distance) => { if(!n(seconds)||!n(distance))return"--";const total=Math.round(n(seconds)/(n(distance)/1000));return`${Math.floor(total/60)}:${String(total%60).padStart(2,"0")} /km`; };
@@ -15,7 +15,7 @@
     const state=window.APP;if(!state?.user)return;
     const days=n($("#range")?.value)||14;
     const daily=state.daily.slice(0,days).reverse();
-    const activities=state.activities.filter(a=>{const age=(Date.now()-new Date(a.started_at).getTime())/86400000;return age>=0&&age<days;});
+    const activities=state.activities.filter(a=>{const started=window.DateUtils?window.DateUtils.parseInstant(a.started_at):new Date(a.started_at); if(!started||Number.isNaN(started.getTime())) return false; const age=((window.DateUtils?window.DateUtils.now():new Date()).getTime()-started.getTime())/86400000;return age>=0&&age<days;});
     const body=state.body.slice(0,days).reverse();
     const average=(rows,key)=>rows.length?rows.reduce((sum,row)=>sum+n(row[key]),0)/rows.length:0;
     const avgSteps=average(daily,"steps"),stressRows=daily.filter(x=>x.stress_average!=null),rhrRows=daily.filter(x=>x.resting_heart_rate!=null),avgStress=average(stressRows,"stress_average"),avgRhr=average(rhrRows,"resting_heart_rate");

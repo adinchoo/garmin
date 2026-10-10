@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#08111f" id="themeColorMeta">
+<meta name="color-scheme" content="light dark">
+<title>Fitness AI — Sign in</title>
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" sizes="32x32" href="./assets/icons/icon-32.png">
+<link rel="stylesheet" href="./assets/css/app.css">
+<link rel="stylesheet" href="./assets/css/theme-quality.css">
+<style>
+.authShell{min-height:100svh;display:grid;place-items:center;padding:24px;background:var(--bg);background-image:radial-gradient(circle at 20% 20%,#22c7f238,transparent 33%),radial-gradient(circle at 80% 80%,#9886ff30,transparent 30%)}
+.authCard{width:min(440px,100%);background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px;box-shadow:var(--shadow)}
+.authCard h1{margin:0 0 8px;font-size:1.8rem;letter-spacing:-.02em}
+.authCard p.muted{margin:0 0 20px}
+.authField{display:grid;gap:6px;margin:0 0 14px}
+.authField label{font-weight:700;font-size:.85rem;color:var(--muted)}
+.authField input{width:100%;min-height:48px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--text);padding:10px 14px}
+.authActions{display:grid;gap:10px;margin-top:18px}
+.authDivider{height:1px;background:var(--line);margin:18px 0}
+.authToggle{text-align:center}
+.authToggle button{background:transparent;border:0;color:var(--blue);font-weight:800;cursor:pointer}
+.errorBox{hidden:true;background:#ff647f18;border:1px solid #ff647f55;color:#ff647f;border-radius:12px;padding:10px 12px;margin:0 0 14px;font-size:.9rem}
+.errorBox.show{display:block}
+</style>
+<script>
+try{const t=localStorage.getItem("theme")==="light"?"light":"dark";document.documentElement.dataset.theme=t;const m=document.querySelector("meta[name=theme-color]");if(m)m.content=t==="dark"?"#08111f":"#f3f6fb"}catch(e){document.documentElement.dataset.theme="dark"}
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="./assets/js/config.js"></script>
+<script defer src="./assets/js/supabase.js"></script>
+</head>
+<body>
+<div class="authShell">
+<div class="authCard">
+<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+<img src="./assets/icons/icon-192.png" width="44" height="44" alt="">
+<span><b style="font-size:1.1rem">Fitness AI</b><br><small style="color:var(--muted);letter-spacing:.12em;font-weight:800">PERFORMANCE OS</small></span>
+</div>
+<h1 id="authTitle">Welcome back</h1>
+<p class="muted" id="authSubtitle">Sign in to sync your Garmin data and AI coaching.</p>
+<div id="authError" class="errorBox" role="alert" hidden></div>
+<form id="authForm">
+<div class="authField"><label for="email">Email</label><input id="email" type="email" required autocomplete="email" placeholder="you@example.com"></div>
+<div class="authField"><label for="password">Password</label><input id="password" type="password" required autocomplete="current-password" placeholder="Minimum 6 characters"></div>
+<div class="authActions">
+<button id="submitBtn" class="btn primary full" type="submit">Sign in</button>
+<button id="googleBtn" class="btn full" type="button" style="display:none">Continue with Google</button>
+</div>
+</form>
+<div class="authDivider"></div>
+<div class="authToggle">
+<span id="toggleText">Don't have an account?</span>
+<button id="toggleMode" type="button">Create account</button>
+</div>
+<p class="muted" style="margin-top:16px;font-size:.8rem;text-align:center">By continuing, you agree that wellness guidance is not medical advice.</p>
+</div>
+</div>
+<script>
+(() => {
+"use strict";
+let mode = "signin"; // signin | signup
+const $ = s => document.querySelector(s);
+function showError(msg){
+  const el=$("#authError");
+  if(!el)return;
+  el.textContent=msg;
+  el.hidden=false;
+  el.classList.add("show");
+}
+function clearError(){
+  const el=$("#authError");
+  if(!el)return;
+  el.textContent="";
+  el.hidden=true;
+  el.classList.remove("show");
+}
+function setBusy(on){
+  const btn=$("#submitBtn");
+  if(!btn)return;
+  btn.disabled=on;
+  btn.dataset.old=btn.dataset.old||btn.textContent;
+  btn.textContent=on ? "Working..." : (mode==="signin"?"Sign in":"Create account");
+}
+async function init(){
+  // If already signed in, go to app
+  try{
+    const {data:{user}} = await db.auth.getUser();
+    if(user){ location.replace("./index.html#home"); return; }
+  }catch(e){}
+  // Listen for auth changes
+  db.auth.onAuthStateChange((event, session)=>{
+    if(event==="SIGNED_IN" && session){
+      location.replace("./index.html#home");
+    }
+  });
+}
+function toggle(){
+  mode = mode==="signin"?"signup":"signin";
+  $("#authTitle").textContent = mode==="signin"?"Welcome back":"Create your account";
+  $("#authSubtitle").textContent = mode==="signin"?"Sign in to sync your Garmin data and AI coaching.":"Start tracking with Fitness AI.";
+  $("#submitBtn").textContent = mode==="signin"?"Sign in":"Create account";
+  $("#toggleText").textContent = mode==="signin"?"Don't have an account?":"Already have an account?";
+  $("#toggleMode").textContent = mode==="signin"?"Create account":"Sign in";
+  $("#password").autocomplete = mode==="signin"?"current-password":"new-password";
+  clearError();
+}
+async function handleSubmit(e){
+  e.preventDefault();
+  clearError();
+  const email=$("#email").value.trim();
+  const password=$("#password").value;
+  if(!email || !password){ showError("Enter email and password."); return; }
+  if(password.length<6){ showError("Password must be at least 6 characters."); return; }
+  setBusy(true);
+  try{
+    if(mode==="signup"){
+      const {data, error} = await db.auth.signUp({email, password, options:{data:{full_name: email.split("@")[0]}}});
+      if(error) throw error;
+      // Supabase may require email confirmation
+      if(data.user && !data.session){
+        showError("Check your email to confirm your account, then sign in.");
+        // Switch to signin mode
+        if(mode==="signup") toggle();
+        return;
+      }
+      // Auto signed in
+    }else{
+      const {error} = await db.auth.signInWithPassword({email, password});
+      if(error) throw error;
+    }
+    // Success handled by onAuthStateChange or redirect
+    location.replace("./index.html#home");
+  }catch(err){
+    console.error(err);
+    let msg = err.message || "Authentication failed.";
+    if(/Invalid login credentials/i.test(msg)) msg="Invalid email or password. Try again or create an account.";
+    if(/Email not confirmed/i.test(msg)) msg="Email not confirmed. Check your inbox.";
+    if(/User already registered/i.test(msg)) msg="Account already exists. Sign in instead.";
+    showError(msg);
+  }finally{
+    setBusy(false);
+  }
+}
+document.addEventListener("DOMContentLoaded", ()=>{
+  $("#toggleMode").addEventListener("click", toggle);
+  $("#authForm").addEventListener("submit", handleSubmit);
+  // Defer init until supabase.js loaded
+  const check = setInterval(()=>{
+    if(window.db && window.APP_CONFIG){ clearInterval(check); init(); }
+  }, 50);
+  setTimeout(()=>clearInterval(check), 5000);
+});
+})();
+</script>
+</body>
+</html>
