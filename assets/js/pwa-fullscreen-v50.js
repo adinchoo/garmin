@@ -66,13 +66,21 @@ document.addEventListener('touchmove', e => {
   const scroll = document.getElementById('scroll');
   if(!scroll) return;
 
+  // Allow inner detail scrolling to proceed natively
+  const target = e.target;
+  const isDetailScroll = target && target.closest && (
+    target.closest('#detail') ||
+    target.closest('.activity-detail') ||
+    target.closest('[data-detail-scroll="true"]')
+  );
+  if(isDetailScroll) return;
+
   const currentY = e.touches[0].clientY;
   const diff = currentY - startY;
 
   // If at top of scroll and pulling down, prevent refresh
   if(scroll.scrollTop <= 0 && diff > 0){
     // Only prevent if not in a dialog or map
-    const target = e.target;
     const isMap = target.closest && target.closest('#map, .leaflet-container');
     const isDialog = target.closest && target.closest('dialog');
     if(!isMap && !isDialog){

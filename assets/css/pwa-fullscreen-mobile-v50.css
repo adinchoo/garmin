@@ -209,7 +209,7 @@ dialog{
   dialog[open]{
     position: fixed;
     inset: 0;
-    width: 100vw;
+    width: 100dvh;
     height: 100dvh;
     max-width: 100vw;
     max-height: 100dvh;
@@ -252,8 +252,9 @@ dialog{
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
   }
+  /* Updated: make the detail area the primary scroll container and ensure it supports native iOS touch scrolling */
   dialog#activityDialog #detail{
-    flex: 0 1 auto;
+    flex: 1 1 auto;
     width: auto;
     min-height: 0;
     max-height: calc(var(--app-height) - var(--sat) - 82px - var(--sab));
@@ -261,9 +262,9 @@ dialog{
     padding: 0;
     overflow-x: hidden;
     overflow-y: auto;
-    overscroll-behavior-y: contain;
     -webkit-overflow-scrolling: touch;
     touch-action: pan-y;
+    overscroll-behavior-y: contain;
     border-radius: 0;
   }
 }
