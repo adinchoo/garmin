@@ -1,18 +1,18 @@
 /* Fitness AI v23 — strict, consistent light/dark themes and readable type scale. */
 :root {
-  --bg:#08111f; --surface:#0d1a2b; --card:#122239; --card2:#192d46;
-  --text:#f3f7fc; --muted:#a7b7ca; --line:#293d56;
-  --blue:#39bdf0; --green:#39bdf0; --red:#ff7187;
-  --shadow:0 8px 26px rgba(0,0,0,.24);
-  --theme-overlay:rgba(8,17,31,.94);
+  --bg:#000000; --surface:#0a0a0a; --card:#111111; --card2:#151515;
+  --text:#ffffff; --muted:#8a9bb0; --line:#1e293b;
+  --blue:#22c7f2; --green:#22d3ee; --red:#ff4d6a;
+  --shadow:0 8px 26px rgba(0,0,0,.9);
+  --theme-overlay:rgba(0,0,0,.96);
   color-scheme:dark;
   font-size:16px;
 }
 :root[data-theme="dark"] {
-  --bg:#08111f; --surface:#0d1a2b; --card:#122239; --card2:#192d46;
-  --text:#f3f7fc; --muted:#a7b7ca; --line:#293d56;
-  --blue:#39bdf0; --green:#39bdf0; --red:#ff7187;
-  --shadow:0 8px 26px rgba(0,0,0,.24); --theme-overlay:rgba(8,17,31,.94);
+  --bg:#000000; --surface:#0a0a0a; --card:#111111; --card2:#151515;
+  --text:#ffffff; --muted:#8a9bb0; --line:#1e293b;
+  --blue:#22c7f2; --green:#22d3ee; --red:#ff4d6a;
+  --shadow:0 8px 26px rgba(0,0,0,.9); --theme-overlay:rgba(0,0,0,.96);
   color-scheme:dark;
 }
 :root[data-theme="light"] {

@@ -149,4 +149,69 @@ document.addEventListener("click", async (e)=>{
   }
 });
 
+let fuelSelectedDate="";
+let fuelWeekMode=false;
+function fuelDateKey(date){return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}-${String(date.getDate()).padStart(2,"0")}`}
+function fuelDateFromKey(key){const parts=key.split("-").map(Number);return new Date(parts[0],parts[1]-1,parts[2])}
+function fuelMealDateKey(meal){const date=new Date(meal.meal_time);return Number.isFinite(date.getTime())?fuelDateKey(date):null}
+// Override the original day-only renderer so dashboard refreshes honor the selected fuel date.
+function renderMeals(){
+  const now=new Date(),todayKey=fuelDateKey(now),selectedDate=fuelSelectedDate||todayKey,selectedDay=fuelDateFromKey(selectedDate);
+  const selectedMeals=S.meals.filter(meal=>fuelMealDateKey(meal)===selectedDate).sort((a,b)=>new Date(a.meal_time)-new Date(b.meal_time));
+  const sum=key=>selectedMeals.reduce((total,meal)=>total+num(meal[key]),0),goal=num(S.profile.daily_calorie_goal)||2000;
+  const calories=Math.round(sum("estimated_calories")),protein=Math.round(sum("estimated_protein_g")),carbs=Math.round(sum("estimated_carbs_g")),fat=Math.round(sum("estimated_fat_g")),pct=Math.min(100,Math.round(calories/goal*100));
+  const label=selectedDate===todayKey?"Today":selectedDate===fuelDateKey(new Date(now.getFullYear(),now.getMonth(),now.getDate()-1))?"Yesterday":selectedDay.toLocaleDateString([],{weekday:"short",month:"short",day:"numeric",year:selectedDay.getFullYear()===now.getFullYear()?undefined:"numeric"});
+  set("fuelDateLabel",fuelWeekMode?"Last 7 Days":label);
+  set("fuelTodayTitle",selectedDate===todayKey?"Today at a glance":`Food log for ${label}`);
+  set("fuelTodayCalories",calories.toLocaleString());
+  set("fuelGoalLabel",`${goal.toLocaleString()} kcal`);
+  set("fuelTodayDate",selectedDay.toLocaleDateString([],{weekday:"long",day:"numeric",month:"long",year:selectedDay.getFullYear()===now.getFullYear()?undefined:"numeric"}));
+  set("fuelMealCount",`${selectedMeals.length} ${selectedMeals.length===1?"meal":"meals"} logged`);
+  set("kcal",`${calories} / ${goal}`);set("protein",`${protein} g`);set("carbs",`${carbs} g`);set("fat",`${fat} g`);
+  const progress=$("#fuelCalorieProgress");if(progress)progress.style.width=`${pct}%`;
+  const ring=$("#fuelCalorieRing");if(ring){ring.style.setProperty("--fuel-progress",`${pct*3.6}deg`);ring.setAttribute("aria-label",`${calories} estimated calories logged against a ${goal} calorie daily reference`)}
+  set("fuelCalorieRemaining",calories===0?"Log your first meal to start your daily summary.":calories<goal?`${(goal-calories).toLocaleString()} kcal to your reference goal — use hunger, energy and activity to guide what comes next.`:`You have logged ${Math.round(calories-goal).toLocaleString()} kcal above your reference goal. One day is only one part of the pattern.`);
+  const groups=[{key:"breakfast",label:"Breakfast",icon:"☀"},{key:"lunch",label:"Lunch",icon:"◉"},{key:"dinner",label:"Dinner",icon:"☾"},{key:"snack",label:"Snacks",icon:"✦"}],mealRoot=$("#todayMealList");
+  if(mealRoot)mealRoot.innerHTML=selectedMeals.length?groups.map(group=>{const rows=selectedMeals.filter(meal=>String(meal.meal_type||"").toLowerCase()===group.key);if(!rows.length)return "";return `<section class="todayMealGroup"><div class="todayMealGroupHead"><span class="todayMealIcon">${group.icon}</span><strong>${group.label}</strong><span>${rows.reduce((total,meal)=>total+Math.round(num(meal.estimated_calories)),0).toLocaleString()} kcal</span></div>${rows.map(meal=>`<article class="todayMealItem"><div class="todayMealItemCopy"><strong>${esc(meal.meal_name||"Meal")}</strong><small>${new Date(meal.meal_time).toLocaleTimeString([],{hour:"numeric",minute:"2-digit"})}${meal.ai_confidence?` · AI estimate: ${esc(meal.ai_confidence)}`:""}</small></div><div class="todayMealItemNumbers"><strong>${Math.round(num(meal.estimated_calories)).toLocaleString()}</strong><small>kcal</small></div><button class="mealDelete" type="button" data-delete="${esc(meal.id)}" aria-label="Delete ${esc(meal.meal_name||"meal")}">×</button></article>`).join("")}</section>`}).join("")+`<p class="fuelTodayFootnote">${selectedMeals.length} logged meal${selectedMeals.length===1?"":"s"} · calorie and macro values may be estimates</p>`:'<div class="fuelEmptyState"><span>◉</span><strong>No meals logged for this day yet</strong><p>Start with breakfast, lunch, dinner or a snack. Your daily totals will update automatically.</p><button class="btn fuelSecondary" type="button" data-fuel-add-first>＋ Add your first meal</button></div>';
+  const weekView=$("#fuelWeekView"),dayView=$("#fuelDayView");if(weekView)weekView.style.display=fuelWeekMode?"":"none";if(dayView)dayView.style.display=fuelWeekMode?"none":"";
+  const historyRoot=$("#fuelHistoryList");
+  if(historyRoot){
+    const days=Array.from({length:7},(_,index)=>{const day=new Date(selectedDay);day.setDate(day.getDate()-(6-index));const key=fuelDateKey(day),meals=S.meals.filter(meal=>fuelMealDateKey(meal)===key);return{day,key,meals,calories:Math.round(meals.reduce((total,meal)=>total+num(meal.estimated_calories),0))}});
+    historyRoot.innerHTML=days.map(({day,key,meals,calories})=>`<button type="button" class="fuelHistoryRow${key===selectedDate?" active":""}" data-fuel-history-date="${key}" aria-pressed="${key===selectedDate}"><span><b>${day.toLocaleDateString([],{weekday:"short",month:"short",day:"numeric"})}</b><small>${meals.length} ${meals.length===1?"meal":"meals"}</small></span><strong>${calories.toLocaleString()} kcal</strong></button>`).join("");
+  }
+  ["fuelChipToday","fuelChipYesterday","fuelChipWeek"].forEach(id=>$("#"+id)?.classList.remove("active"));
+  if(!fuelWeekMode&&selectedDate===todayKey)$("#fuelChipToday")?.classList.add("active");
+  else if(!fuelWeekMode&&selectedDate===fuelDateKey(new Date(now.getFullYear(),now.getMonth(),now.getDate()-1)))$("#fuelChipYesterday")?.classList.add("active");
+  else if(fuelWeekMode)$("#fuelChipWeek")?.classList.add("active");
+  const picker=$("#fuelDatePicker");if(picker){picker.value=selectedDate;picker.max=todayKey}
+  const next=$("#fuelNextBtn");if(next)next.disabled=selectedDate>=todayKey;
+  const historyRootMeals=$("#mealList");if(historyRootMeals)historyRootMeals.innerHTML=S.meals.map(meal=>`<div class="meal"><div><b>${esc(meal.meal_name||"Meal")}</b><small>${esc(meal.meal_type||"")} · ${date(meal.meal_time)}</small></div><strong>${Math.round(num(meal.estimated_calories))} kcal</strong><button data-delete="${esc(meal.id)}" aria-label="Delete ${esc(meal.meal_name||"meal")}">×</button></div>`).join("")||'<p class="empty">No meals logged yet.</p>';
+}
+document.addEventListener("DOMContentLoaded",()=>{
+  fuelSelectedDate=fuelDateKey(new Date());
+  const loadFuelRange=async()=>{
+    if(!S.user)return;
+    const start=fuelDateFromKey(fuelSelectedDate),end=fuelDateFromKey(fuelSelectedDate);
+    if(fuelWeekMode)start.setDate(start.getDate()-6);
+    end.setDate(end.getDate()+1);
+    try{
+      const{data,error}=await db.from("meals").select("*").eq("user_id",S.user.id).gte("meal_time",start.toISOString()).lt("meal_time",end.toISOString()).order("meal_time",{ascending:false});
+      if(error)throw error;
+      const mealsById=new Map(S.meals.map(meal=>[String(meal.id),meal]));
+      (data||[]).forEach(meal=>mealsById.set(String(meal.id),meal));
+      S.meals=[...mealsById.values()];
+      renderMeals();
+    }catch(error){console.error("Fuel date filter failed to load meals",error);toast(error.message||"Could not load meals for this date","error")}
+  };
+  const changeDate=key=>{if(typeof key!=="string"||!/^\d{4}-\d{2}-\d{2}$/.test(key))return;const todayKey=fuelDateKey(new Date()),day=fuelDateFromKey(key);if(fuelDateKey(day)!==key||key>todayKey)return;fuelWeekMode=false;fuelSelectedDate=key;renderMeals();loadFuelRange()};
+  $("#fuelPrevBtn")?.addEventListener("click",()=>{const day=fuelDateFromKey(fuelSelectedDate||fuelDateKey(new Date()));day.setDate(day.getDate()-1);fuelSelectedDate=fuelDateKey(day);renderMeals();loadFuelRange()});
+  $("#fuelNextBtn")?.addEventListener("click",()=>{const day=fuelDateFromKey(fuelSelectedDate||fuelDateKey(new Date()));day.setDate(day.getDate()+1);if(fuelDateKey(day)<=fuelDateKey(new Date())){fuelSelectedDate=fuelDateKey(day);renderMeals();loadFuelRange()}});
+  $("#fuelChipToday")?.addEventListener("click",()=>{fuelWeekMode=false;changeDate(fuelDateKey(new Date()))});
+  $("#fuelChipYesterday")?.addEventListener("click",()=>{fuelWeekMode=false;const day=new Date();day.setDate(day.getDate()-1);changeDate(fuelDateKey(day))});
+  $("#fuelChipWeek")?.addEventListener("click",()=>{fuelWeekMode=true;renderMeals();loadFuelRange()});
+  $("#fuelCalBtn")?.addEventListener("click",()=>{const picker=$("#fuelDatePicker");if(!picker)return;if(typeof picker.showPicker==="function")picker.showPicker();else picker.click()});
+  $("#fuelDatePicker")?.addEventListener("change",event=>{fuelWeekMode=false;changeDate(event.target.value)});
+  $("#fuelHistoryList")?.addEventListener("click",event=>{const row=event.target.closest("[data-fuel-history-date]");if(row)changeDate(row.dataset.fuelHistoryDate)});
+});
+
 })();

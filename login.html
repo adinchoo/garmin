@@ -1,11 +1,14 @@
 <!doctype html>
 <html lang="en">
-<head>
+<head><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="mobile-web-app-capable" content="yes">
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
-<meta name="theme-color" content="#08111f" id="themeColorMeta">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+<meta name="theme-color" content="#000000">
 <meta name="color-scheme" content="light dark">
 <title>Fitness AI — Sign in</title>
+<link rel="icon" type="image/svg+xml" href="./assets/icons/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="./assets/icons/icon-32.png">
+<link rel="apple-touch-icon" href="./assets/icons/apple-touch-icon.png">
 <link rel="manifest" href="./manifest.json">
 <link rel="icon" sizes="32x32" href="./assets/icons/icon-32.png">
 <link rel="stylesheet" href="./assets/css/app.css">
@@ -26,12 +29,12 @@
 .errorBox.show{display:block}
 </style>
 <script>
-try{const t=localStorage.getItem("theme")==="light"?"light":"dark";document.documentElement.dataset.theme=t;const m=document.querySelector("meta[name=theme-color]");if(m)m.content=t==="dark"?"#08111f":"#f3f6fb"}catch(e){document.documentElement.dataset.theme="dark"}
+try{const t=localStorage.getItem("theme")==="light"?"light":"dark";document.documentElement.dataset.theme=t;const m=document.querySelector("meta[name=theme-color]");if(m)m.content=t==="dark"?"#000000":"#f3f6fb"}catch(e){document.documentElement.dataset.theme="dark"}
 </script>
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script defer src="./assets/js/config.js"></script>
 <script defer src="./assets/js/supabase.js"></script>
-</head>
+<link rel="stylesheet" href="./assets/css/pwa-fullscreen-mobile-v50.css?v=50.2.0"></head>
 <body>
 <div class="authShell">
 <div class="authCard">

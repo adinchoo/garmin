@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Fitness AI Hub icon">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#22C7F2"/>
+      <stop offset="100%" stop-color="#0EA5E9"/>
+    </linearGradient>
+    <radialGradient id="bg" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#111E36"/>
+      <stop offset="100%" stop-color="#08111F"/>
+    </radialGradient>
+  </defs>
+  <!-- Background rounded -->
+  <rect width="512" height="512" rx="120" fill="url(#bg)"/>
+  <!-- Outer glow -->
+  <circle cx="256" cy="256" r="160" fill="url(#g)" opacity="0.95"/>
+  <!-- Inner dark cut for depth -->
+  <circle cx="256" cy="256" r="132" fill="#08111F" opacity="0.92"/>
+  <!-- Core cyan -->
+  <circle cx="256" cy="256" r="108" fill="url(#g)"/>
+  <!-- Heart rate pulse line - stylized F/AI -->
+  <path d="M 156 268 L 198 268 L 220 208 L 244 312 L 268 168 L 292 268 L 356 268" 
+        fill="none" stroke="white" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" opacity="0.98"/>
+  <!-- AI spark dot -->
+  <circle cx="296" cy="162" r="18" fill="white"/>
+  <circle cx="296" cy="162" r="8" fill="#22C7F2"/>
+</svg>

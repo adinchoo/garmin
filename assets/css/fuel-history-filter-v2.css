@@ -1,0 +1,114 @@
+/* Fuel Previous Day Filter - NEW FEATURE v2 */
+.fuelDateNav{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  background:var(--card2, #162542);
+  border:1px solid var(--line, #1e3352);
+  border-radius:14px;
+  padding:8px 8px;
+  margin:14px 0 12px;
+  gap:8px;
+}
+.fuelNavBtn{
+  width:36px;height:36px;
+  border-radius:10px;
+  background:var(--surface, #0f1e35);
+  border:1px solid var(--line, #1e3352);
+  color:var(--text, #e6eefc);
+  font-size:18px;font-weight:700;
+  cursor:pointer;
+  display:grid;place-items:center;
+  transition:opacity .2s, background .2s;
+}
+.fuelNavBtn:disabled{opacity:.35;cursor:not-allowed}
+.fuelNavBtn:active{background:var(--card2)}
+.fuelDateCenter{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-weight:700;
+  font-size:14px;
+}
+.fuelCalWrap{position:relative}
+.fuelCalInput{
+  position:absolute;
+  left:-9999px;
+  top:auto;
+  width:1px;height:1px;
+  opacity:0;
+  pointer-events:none;
+}
+.fuelCalBtn{
+  width:34px;height:34px;
+  border-radius:9px;
+  background:var(--surface, #0f1e35);
+  border:1px solid var(--line);
+  display:grid;place-items:center;
+  cursor:pointer;
+  font-size:16px;
+}
+.fuelChips{
+  display:flex;
+  gap:8px;
+  margin:0 0 14px;
+  overflow:auto;
+  scrollbar-width:none;
+  -webkit-overflow-scrolling:touch;
+}
+.fuelChips::-webkit-scrollbar{display:none}
+.fuelChips .chip{
+  white-space:nowrap;
+  padding:8px 12px;
+  border-radius:999px;
+  background:var(--surface, #10203a);
+  border:1px solid var(--line);
+  font-size:11px;font-weight:700;
+  color:var(--muted, #8aa0c0);
+  cursor:pointer;
+  letter-spacing:.2px;
+}
+.fuelChips .chip.active{
+  background:#17305a;
+  color:#d6e7ff;
+  border-color:#2b4d82;
+}
+#fuelWeekView{
+  animation: fuelFade .22s ease;
+}
+.fuelWeekHeader{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:10px;
+}
+.fuelWeekHeader h4{font-size:16px;font-weight:700}
+.fuelWeekHeader p{font-size:11px;color:var(--muted)}
+.fuelHistoryList{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.fuelHistoryRow{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:var(--surface, #0f1e35);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:12px 12px;
+  width:100%;
+  color:inherit;
+  font:inherit;
+  text-align:left;
+  cursor:pointer;
+  transition:border-color .2s, background .2s;
+}
+.fuelHistoryRow.active{
+  border-color:var(--blue, #38bdf8);
+  background:#132a4d;
+}
+.fuelHistoryRow b{font-size:14px}
+.fuelHistoryRow small{font-size:11px;color:var(--muted)}
+@keyframes fuelFade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+#fuelDayView{animation: fuelFade .22s ease}

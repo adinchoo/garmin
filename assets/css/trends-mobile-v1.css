@@ -1,0 +1,164 @@
+@media (max-width: 760px){
+  [data-view="trends"],
+  [data-view="trends"] > *{
+    min-width:0;
+  }
+
+  [data-view="trends"] .trendFeatureGrid,
+  [data-view="trends"] .trendSecondary{
+    grid-template-columns:minmax(0,1fr);
+    gap:12px;
+  }
+
+  [data-view="trends"] .trendMainChart,
+  [data-view="trends"] .activityMixPanel,
+  [data-view="trends"] .trendSecondary > .chart,
+  [data-view="trends"] .weeklyPanel{
+    width:100%;
+    min-width:0;
+    min-height:0;
+    height:auto;
+    padding:14px;
+  }
+
+  [data-view="trends"] .chart > header{
+    display:grid;
+    grid-template-columns:36px minmax(0,1fr);
+    align-items:start;
+    gap:8px 10px;
+  }
+
+  [data-view="trends"] .chart > header > div{
+    min-width:0;
+  }
+
+  [data-view="trends"] .chart > header h3{
+    font-size:.95rem;
+    line-height:1.35;
+    overflow-wrap:anywhere;
+  }
+
+  [data-view="trends"] .chart > header .chartBadge{
+    grid-column:2;
+    max-width:100%;
+    margin:0;
+    white-space:normal;
+    overflow-wrap:anywhere;
+  }
+
+  [data-view="trends"] .trendMainChart .canvasWrap.tall{
+    width:100%;
+    height:250px;
+    min-width:0;
+  }
+
+  [data-view="trends"] .trendSecondary .canvasWrap{
+    width:100%;
+    height:225px;
+    min-width:0;
+  }
+
+  [data-view="trends"] .canvasWrap canvas{
+    max-width:100%;
+  }
+
+  [data-view="trends"] .activityMixPanel .panelHead{
+    align-items:flex-start;
+    gap:8px;
+  }
+
+  [data-view="trends"] .activityMixPanel .panelHead > div{
+    min-width:0;
+  }
+
+  [data-view="trends"] .activityMixPanel .panelHead h3{
+    font-size:.95rem;
+    line-height:1.35;
+  }
+
+  [data-view="trends"] .activityMixPanel .chartBadge{
+    flex:0 1 auto;
+    max-width:42%;
+    white-space:normal;
+    text-align:right;
+  }
+
+  [data-view="trends"] .donutWrap{
+    width:min(190px,72vw);
+    height:min(190px,72vw);
+    margin:14px auto;
+  }
+
+  [data-view="trends"] .performanceStats{
+    min-width:0;
+    padding:14px;
+  }
+
+  [data-view="trends"] .performanceHead{
+    align-items:flex-start;
+    gap:8px;
+  }
+
+  [data-view="trends"] .performanceHead h3{
+    font-size:.98rem;
+    line-height:1.35;
+  }
+
+  [data-view="trends"] .performanceGrid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:8px;
+  }
+
+  [data-view="trends"] .performanceGrid article{
+    min-width:0;
+    min-height:94px;
+    grid-template-columns:minmax(0,1fr);
+    padding:11px;
+  }
+
+  [data-view="trends"] .performanceGrid article > div,
+  [data-view="trends"] .performanceGrid article small,
+  [data-view="trends"] .performanceGrid article b,
+  [data-view="trends"] .performanceGrid article p{
+    min-width:0;
+    overflow-wrap:anywhere;
+  }
+
+  [data-view="trends"] .performanceGrid article small{
+    font-size:.58rem;
+    line-height:1.35;
+  }
+
+  [data-view="trends"] .performanceGrid article b{
+    font-size:1rem;
+    line-height:1.25;
+  }
+
+  [data-view="trends"] .performanceGrid article p{
+    font-size:.68rem;
+    line-height:1.4;
+  }
+
+  [data-view="trends"] .trendInsightBanner{
+    grid-template-columns:38px minmax(0,1fr);
+    gap:10px;
+    padding:13px;
+  }
+
+  [data-view="trends"] .trendInsightBanner .insightSpark{
+    width:38px;
+    height:38px;
+  }
+
+  [data-view="trends"] .trendInsightBanner .btn{
+    grid-column:1/-1;
+    width:100%;
+  }
+}
+
+@media (max-width: 360px){
+  [data-view="trends"] .trendKpis,
+  [data-view="trends"] .performanceGrid{
+    grid-template-columns:minmax(0,1fr);
+  }
+}
