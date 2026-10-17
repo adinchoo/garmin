@@ -1,0 +1,8 @@
+.deleteActivitiesBtn {
+  color: #ff7185;
+  border-color: rgba(255, 113, 133, .4) !important;
+}
+
+.deleteActivitiesBtn:hover:not(:disabled) {
+  background: rgba(255, 113, 133, .12);
+}
